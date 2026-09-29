@@ -1,0 +1,85 @@
+---
+const navegacion = [
+  { href: "/proyecto", texto: "El proyecto" },
+  { href: "/estimar", texto: "Módulo de estimación" },
+  { href: "/login", texto: "Acceso institucional" },
+];
+
+const fuentes = [
+  { nombre: "CONAF · Pampa del Tamarugal", url: "https://www.conaf.cl" },
+  { nombre: "Catastro Vegetacional (MMA)", url: "https://mma.gob.cl" },
+  { nombre: "Duoc UC Melipilla", url: "https://www.duoc.cl" },
+];
+---
+
+<!-- Fondo desertico -->
+<footer class="w-full bg-desierto text-desierto pt-8">
+
+  <div class="w-full bg-arbol rounded-tl-[4rem] sm:rounded-tl-[6rem] md:rounded-tl-[8rem] px-6 sm:px-12 md:px-16 pt-16 sm:pt-20 pb-8 overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+      
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-14 pb-14 border-b border-desierto/15">
+        
+        <div class="md:col-span-6 space-y-4">
+          <h3 class="font-serif italic text-2xl sm:text-3xl text-desierto font-normal leading-snug">
+            Conservando el bosque nativo del desierto más árido.
+          </h3>
+          <p class="text-sm sm:text-base text-desierto/80 font-sans max-w-md leading-relaxed">
+            Sitio web integrado a un modelo predictivo de aprendizaje automático para estimar la carga frutal de la especie Prosopis tamarugo, apoyando la toma de decisiones ecológicas en planes de conservación y reforestación en el norte de Chile.
+          </p>
+        </div>
+
+        <!-- Columna Central: Navegación (3 columnas) -->
+        <div class="md:col-span-3 space-y-3">
+          <h4 class="font-mono text-xs tracking-widest uppercase text-desierto/60 font-semibold">
+            Navegación
+          </h4>
+          <ul class="space-y-2 text-sm text-desierto/80 font-sans">
+            {navegacion.map((item) => (
+              <li>
+                <a href={item.href} class="hover:text-desierto hover:underline underline-offset-4 transition-colors">
+                  {item.texto}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="md:col-span-3 space-y-3">
+          <h4 class="font-mono text-xs tracking-widest uppercase text-desierto/60 font-semibold">
+            Contexto & Fuentes
+          </h4>
+          <ul class="space-y-2 text-sm text-desierto/80 font-sans">
+            {fuentes.map((f) => (
+              <li>
+                <a 
+                  href={f.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  class="inline-flex items-center gap-1 hover:text-desierto hover:underline underline-offset-4 transition-colors"
+                >
+                  {f.nombre}
+                  <span class="text-xs opacity-60">↗</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="pt-6 pb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-desierto/60 font-sans">
+        <p>
+          Proyecto de Titulación · Escuela de Informática y Telecomunicaciones, Duoc UC sede Melipilla.
+        </p>
+      </div>
+
+      <div class="pt-8 sm:pt-12 text-center select-none overflow-hidden">
+        <span class="block font-serif italic text-desierto text-[14vw] leading-[0.8] tracking-tight font-medium opacity-95">
+          HarvesTam
+        </span>
+      </div>
+
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,52 @@
+---
+
+// Sacarlo de google maps
+const mapa =
+  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d521206.2585405917!2d-69.71013589224161!3d-20.630052080959242!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x915235f3daeecfe7%3A0x48e08702134a2548!2sReserva%20Nacional%20Pampa%20del%20Tamarugal!5e0!3m2!1ses-419!2scl!4v1790619890062!5m2!1ses-419!2scl";
+const enlace =
+  "https://www.google.com/maps/search/?api=1&query=Reserva+Nacional+Pampa+del+Tamarugal";
+---
+
+<section class="w-full bg-arbol text-desierto px-6 sm:px-12 md:px-16 py-16 sm:py-24 border-t border-desierto/20">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
+
+    <div class="space-y-5">
+      <h2 class="font-serif text-2xl sm:text-3xl font-medium tracking-tight">
+        Dónde vive: la Reserva Nacional Pampa del Tamarugal
+      </h2>
+      <p class="text-base leading-relaxed text-desierto/85">
+        En la región de Tarapacá, a unos 70 km al este de Iquique, CONAF administra
+        un área protegida de más de 100.000 hectáreas que alberga la mayor plantación
+        de especies nativas del país.
+      </p>
+      <p class="text-base leading-relaxed text-desierto/85">
+        Buena parte de este bosque no es natural: fue plantado por CORFO entre 1965 y
+        1973, y existen además bosquetes naturales, como los de La Tirana y el Salar de
+        Llamara.
+      </p>
+      <p class="text-base leading-relaxed text-desierto/85">
+        Hoy el desafío es su regeneración. En 2012, el comité de clasificación de
+        especies del Ministerio del Medio Ambiente señaló que en las plantaciones de
+        Tarapacá no se encontraban plántulas ni renovales.
+      </p>
+      <p class="text-sm text-desierto/60">
+        Fuentes: Ministerio del Medio Ambiente (ficha de clasificación, 2012) y CONAF.
+      </p>
+    </div>
+
+    <div>
+      <iframe
+        src={mapa}
+        title="Mapa de la Reserva Nacional Pampa del Tamarugal"
+        class="w-full h-80 md:h-[28rem] border-0 rounded-sm grayscale hover:grayscale-0 transition duration-700"
+        allowfullscreen
+        loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin"
+      ></iframe>
+      <a href={enlace} target="_blank" rel="noopener" class="inline-block mt-3 text-sm underline underline-offset-4 hover:opacity-75">
+        Abrir en Google Maps
+      </a>
+    </div>
+
+  </div>
+</section>

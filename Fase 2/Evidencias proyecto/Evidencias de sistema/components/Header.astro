@@ -1,0 +1,26 @@
+---
+const enlaces = [
+  { href: "/proyecto", texto: "Sobre el proyecto" },
+  { href: "/estimar", texto: "Estimar" },
+  { href: "/login", texto: "Ingresar" },
+];
+---
+
+<header class="w-full bg-desierto text-arbol px-6 sm:px-12 md:px-16 py-5 border-b border-arbol/10 transition-colors">
+  <div class="max-w-7xl mx-auto flex flex-wrap items-baseline justify-between gap-y-3 gap-x-8">
+    <a href="/" class="font-serif italic text-xl sm:text-2xl font-semibold tracking-tight hover:opacity-85 transition-opacity">
+      HarvesTam · Edu
+    </a>
+
+    <nav class="flex items-center gap-6 sm:gap-8 text-sm sm:text-base font-medium">
+      {enlaces.map((e) => (
+        <a
+          href={e.href}
+          class="relative py-1 transition-colors hover:text-arbol/80 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-arbol hover:after:w-full after:transition-all after:duration-300"
+        >
+          {e.texto}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
