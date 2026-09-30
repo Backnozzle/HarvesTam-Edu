@@ -1,0 +1,145 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  mostrarGauge?: boolean;
+}
+
+const {
+  title = "HarvesTam - Edu",
+  description = "Estimación de la carga frutal del Prosopis tamarugo para apoyar su conservación.",
+  mostrarGauge = false,
+} = Astro.props;
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Alegreya+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <noscript><style>.reveal { opacity: 1 !important; transform: none !important; }</style></noscript>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+
+    <!-- Indicador de scroll condicionado solo para la portada -->
+    {mostrarGauge && (
+      <div class="gauge" aria-hidden="true">
+        {/* Evaluar uso de texto */}
+        {/* <span>desierto</span> */}
+        <i></i>
+        {/* <span>árbol</span> */}
+      </div>
+    )}
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --desierto: #f3eee0;
+    --arbol: #3f4a31;
+    --trazo: #c6c4b2;
+    --serif: "Alegreya", Georgia, serif;
+    --sans: "Alegreya Sans", system-ui, sans-serif;
+    --margen: clamp(1.25rem, 5vw, 4rem);
+  }
+  html { scroll-behavior: smooth; background: var(--arbol); }
+  body {
+    margin: 0;
+    background: var(--desierto);
+    color: var(--arbol);
+    font-family: var(--sans);
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+
+  .pagina { max-width: 46rem; margin: 0 auto; padding: 4rem var(--margen); }
+  .pagina h1 { font-family: var(--serif); font-size: 2.4rem; line-height: 1.1; margin-bottom: 1rem; }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: var(--d, 0s);
+  }
+  .reveal.is-visible { opacity: 1; transform: none; }
+
+  .gauge {
+    position: fixed;
+    right: 1.25rem;
+    top: 50%;
+    translate: 0 -50%;
+    z-index: 20;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+    color: #f3eee0;
+    mix-blend-mode: difference;
+    font-size: 0.8rem;
+    pointer-events: none;
+  }
+  .gauge span { writing-mode: vertical-rl; letter-spacing: 0.08em; }
+  .gauge i { position: relative; display: block; width: 1px; height: 120px; background: currentColor; opacity: 0.6; }
+  .gauge i::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: calc(var(--p, 0) * 100%);
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    translate: -50% -50%;
+  }
+  @media (min-width: 1000px) { .gauge { display: flex; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+  :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+</style>
+
+<script>
+  // Observador de elementos animados (.reveal)
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          e.target.classList.add("is-visible");
+          io.unobserve(e.target);
+        }
+      }
+    },
+    { threshold: 0.15 }
+  );
+  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+  // Actualizador del medidor (solo si existe en el DOM)
+  const gauge = document.querySelector<HTMLElement>(".gauge");
+  if (gauge) {
+    const actualizar = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const p = max > 0 ? window.scrollY / max : 0;
+      gauge.style.setProperty("--p", String(Math.min(1, Math.max(0, p))));
+    };
+    window.addEventListener("scroll", actualizar, { passive: true });
+    actualizar();
+  }
+</script>

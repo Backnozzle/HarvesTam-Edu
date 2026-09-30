@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+@theme static {
+  --color-desierto: #f3eee0;
+  --color-arbol: #3f4a31;
+  --color-arbol-hover: #343d29;
+  --font-serif: "Alegreya", Georgia, serif;
+  --font-sans: "Alegreya Sans", system-ui, sans-serif;
+}
