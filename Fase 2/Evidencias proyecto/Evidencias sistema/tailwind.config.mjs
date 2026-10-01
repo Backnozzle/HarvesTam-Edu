@@ -4,13 +4,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        desierto: 'var(--desierto)',
-        arbol: 'var(--arbol)',
+        arbol: '#3f4a31',
+        arbolHover: '#323c26',
+        desierto: '#f3eee0',
       },
       fontFamily: {
-        serif: ['var(--serif)', 'serif'],
-        // Mantiene la fuente heredada para el texto normal, 
-        sans: ['inherit'],
+        serif: ['"Alegreya"', 'Georgia', 'serif'],
+        sans: ['"Alegreya Sans"', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
       },
     },
   },

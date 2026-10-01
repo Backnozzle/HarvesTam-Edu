@@ -1,0 +1,17 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+<Layout title="Panel de administración">
+  <div class="pagina" id="contenido" style="display:none;">
+    <h1>Panel de administración</h1>
+    <p>En construcción: aquí van los KPIs del sitio.</p>
+  </div>
+</Layout>
+
+<script>
+  import { exigirRol } from "../lib/proteger";
+  const contenido = document.querySelector<HTMLElement>("#contenido")!;
+  exigirRol("admin").then((autorizado) => {
+    if (autorizado) contenido.style.display = "block";
+  });
+</script>

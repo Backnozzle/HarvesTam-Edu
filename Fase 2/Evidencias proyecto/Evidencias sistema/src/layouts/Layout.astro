@@ -15,6 +15,7 @@ const {
   mostrarGauge = false,
 } = Astro.props;
 ---
+
 <!doctype html>
 <html lang="es">
   <head>
@@ -25,10 +26,17 @@ const {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Alegreya+Sans:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400..700;1,400..700&family=Alegreya+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
-    <noscript><style>.reveal { opacity: 1 !important; transform: none !important; }</style></noscript>
+    <noscript
+      ><style>
+        .reveal {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      </style></noscript
+    >
   </head>
   <body>
     <Header />
@@ -37,15 +45,17 @@ const {
     </main>
     <Footer />
 
-    <!-- Indicador de scroll condicionado solo para la portada -->
-    {mostrarGauge && (
-      <div class="gauge" aria-hidden="true">
-        {/* Evaluar uso de texto */}
-        {/* <span>desierto</span> */}
-        <i></i>
-        {/* <span>árbol</span> */}
-      </div>
-    )}
+    <!-- Indicador de scroll -->
+    {
+      mostrarGauge && (
+        <div class="gauge" aria-hidden="true">
+          {/* Evaluar uso de texto */}
+          {/* <span>desierto</span> */}
+          <i />
+          {/* <span>árbol</span> */}
+        </div>
+      )
+    }
   </body>
 </html>
 
@@ -58,7 +68,10 @@ const {
     --sans: "Alegreya Sans", system-ui, sans-serif;
     --margen: clamp(1.25rem, 5vw, 4rem);
   }
-  html { scroll-behavior: smooth; background: var(--arbol); }
+  html {
+    scroll-behavior: smooth;
+    background: var(--arbol);
+  }
   body {
     margin: 0;
     background: var(--desierto);
@@ -68,16 +81,30 @@ const {
     line-height: 1.6;
   }
 
-  .pagina { max-width: 46rem; margin: 0 auto; padding: 4rem var(--margen); }
-  .pagina h1 { font-family: var(--serif); font-size: 2.4rem; line-height: 1.1; margin-bottom: 1rem; }
+  .pagina {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 4rem var(--margen);
+  }
+  .pagina h1 {
+    font-family: var(--serif);
+    font-size: 2.4rem;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
 
   .reveal {
     opacity: 0;
     transform: translateY(16px);
-    transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition:
+      opacity 0.9s ease,
+      transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
     transition-delay: var(--d, 0s);
   }
-  .reveal.is-visible { opacity: 1; transform: none; }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
 
   .gauge {
     position: fixed;
@@ -94,8 +121,18 @@ const {
     font-size: 0.8rem;
     pointer-events: none;
   }
-  .gauge span { writing-mode: vertical-rl; letter-spacing: 0.08em; }
-  .gauge i { position: relative; display: block; width: 1px; height: 120px; background: currentColor; opacity: 0.6; }
+  .gauge span {
+    writing-mode: vertical-rl;
+    letter-spacing: 0.08em;
+  }
+  .gauge i {
+    position: relative;
+    display: block;
+    width: 1px;
+    height: 120px;
+    background: currentColor;
+    opacity: 0.6;
+  }
   .gauge i::after {
     content: "";
     position: absolute;
@@ -107,13 +144,26 @@ const {
     background: currentColor;
     translate: -50% -50%;
   }
-  @media (min-width: 1000px) { .gauge { display: flex; } }
+  @media (min-width: 1000px) {
+    .gauge {
+      display: flex;
+    }
+  }
 
   @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    .reveal { opacity: 1; transform: none; transition: none; }
+    html {
+      scroll-behavior: auto;
+    }
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
-  :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+  :focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
 </style>
 
 <script>
@@ -127,7 +177,7 @@ const {
         }
       }
     },
-    { threshold: 0.15 }
+    { threshold: 0.15 },
   );
   document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 

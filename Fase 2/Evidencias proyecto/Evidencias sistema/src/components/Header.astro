@@ -2,25 +2,114 @@
 const enlaces = [
   { href: "/proyecto", texto: "Sobre el proyecto" },
   { href: "/estimar", texto: "Estimar" },
-  { href: "/login", texto: "Ingresar" },
 ];
+
+const claseEnlace =
+  "relative py-1 transition-colors hover:text-arbol/80 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-arbol hover:after:w-full after:transition-all after:duration-300";
 ---
 
 <header class="w-full bg-desierto text-arbol px-6 sm:px-12 md:px-16 py-5 border-b border-arbol/10 transition-colors">
-  <div class="max-w-7xl mx-auto flex flex-wrap items-baseline justify-between gap-y-3 gap-x-8">
+  <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-y-3 gap-x-8">
+    
     <a href="/" class="font-serif italic text-xl sm:text-2xl font-semibold tracking-tight hover:opacity-85 transition-opacity">
       HarvesTam · Edu
     </a>
 
     <nav class="flex items-center gap-6 sm:gap-8 text-sm sm:text-base font-medium">
       {enlaces.map((e) => (
-        <a
-          href={e.href}
-          class="relative py-1 transition-colors hover:text-arbol/80 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-arbol hover:after:w-full after:transition-all after:duration-300"
-        >
-          {e.texto}
-        </a>
+        <a href={e.href} class={claseEnlace}>{e.texto}</a>
       ))}
+
+      <!-- Si no está autenticado -->
+      <a href="/login" data-auth="invitado" class={claseEnlace}>
+        Ingresar
+      </a>
+
+      <!-- Si el estado es Autenticado -->
+      <div data-auth="sesion" style="display:none;" class="items-center gap-3">
+        <!-- Icono de usuario -->
+        <a
+          id="enlace-perfil"
+          href="/panel"
+          title="Mi panel"
+          aria-label="Ir al panel"
+          class="flex items-center justify-center w-9 h-9 rounded-full bg-arbol hover:bg-arbolHover text-white shadow-sm transition-all duration-200 active:scale-95 border border-arbol/20"
+        >
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            stroke-width="1.8" 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            class="w-5 h-5 text-white"
+          >
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </a>
+
+        <button
+          id="cerrar-sesion"
+          type="button"
+          class="text-s opacity-60 hover:opacity-100 transition-opacity underline underline-offset-4 cursor-pointer"
+        >
+          Salir
+        </button>
+      </div>
+
     </nav>
   </div>
 </header>
+
+<script>
+  import { supabase } from "../lib/supabase";
+
+  const elementosInvitado = document.querySelectorAll<HTMLElement>('[data-auth="invitado"]');
+  const elementosConSesion = document.querySelectorAll<HTMLElement>('[data-auth="sesion"]');
+  const enlacePerfil = document.querySelector<HTMLAnchorElement>("#enlace-perfil");
+
+  async function actualizarHeader() {
+    // Si estamos en la pantalla de restablecer clave, forzamos vista limpia
+    if (window.location.pathname.startsWith("/restablecer-clave")) {
+      elementosInvitado.forEach((el) => el.classList.remove("hidden"));
+      elementosConSesion.forEach((el) => {
+        el.style.display = "none";
+      });
+      return;
+    }
+
+    const { data } = await supabase.auth.getSession();
+    const haySesion = data.session !== null;
+
+    elementosInvitado.forEach((el) => el.classList.toggle("hidden", haySesion));
+    elementosConSesion.forEach((el) => {
+      el.style.display = haySesion ? "flex" : "none";
+    });
+
+    if (haySesion && data.session?.user && enlacePerfil) {
+      const { data: perfil } = await supabase
+        .from("perfiles")
+        .select("rol")
+        .eq("id", data.session.user.id)
+        .single();
+
+      if (perfil?.rol === "admin") {
+        enlacePerfil.href = "/dashboard";
+        enlacePerfil.title = "Panel de Administración";
+      } else {
+        enlacePerfil.href = "/panel";
+        enlacePerfil.title = "Panel de Monitoreo";
+      }
+    }
+  }
+
+  actualizarHeader();
+  supabase.auth.onAuthStateChange(() => actualizarHeader());
+
+  document.querySelector("#cerrar-sesion")?.addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/";
+  });
+</script>

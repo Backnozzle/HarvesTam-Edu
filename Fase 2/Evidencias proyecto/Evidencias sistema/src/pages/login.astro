@@ -1,7 +1,213 @@
 ---
 import Layout from "../layouts/Layout.astro";
 ---
-<Layout title="Inicio de sesión">
-  <h1 class="text-2xl font-semibold">Estimar carga frutal</h1>
-  <p>En construcción.</p>
+
+<Layout title="Acceso institucional · HarvesTam - Edu">
+  <div class="min-h-[75vh] flex items-center justify-center px-4 sm:px-6 py-12">
+    <div class="w-full max-w-md bg-white rounded-sm p-8 sm:p-10 shadow-xl space-y-6 animate-in">
+      
+      <div class="text-center space-y-1">
+        <h1 class="font-serif italic text-3xl font-medium text-arbol tracking-tight">
+          HarvesTam · Edu
+        </h1>
+        <p id="subtitulo-auth" class="text-xs text-arbol/60 font-mono uppercase tracking-wider">
+          Acceso al Sistema
+        </p>
+      </div>
+
+      <!-- Pestañas (ocultas en modo recuperación) -->
+      <div id="contenedor-tabs" class="flex border-b border-arbol/15 text-sm font-medium">
+        <button
+          id="tab-login"
+          type="button"
+          class="flex-1 pb-3 text-center border-b-2 border-arbol text-arbol font-semibold transition-all duration-300"
+        >
+          Iniciar sesión
+        </button>
+        <button
+          id="tab-registro"
+          type="button"
+          class="flex-1 pb-3 text-center border-b-2 border-transparent text-arbol/50 hover:text-arbol transition-all duration-300"
+        >
+          Crear cuenta
+        </button>
+      </div>
+
+      <!-- Alerta -->
+      <div id="alerta" class="hidden p-3.5 text-xs sm:text-sm rounded border leading-relaxed font-sans transition-all duration-300"></div>
+
+      <!-- Formulario -->
+      <form id="auth-form" class="space-y-4">
+        <div>
+          <label for="correo" class="block text-xs uppercase tracking-wider font-mono text-arbol/80 mb-1.5">
+            Correo electrónico
+          </label>
+          <input
+            type="email"
+            id="correo"
+            required
+            autocomplete="email"
+            placeholder="usuario@ejemplo.cl"
+            class="w-full px-3.5 py-2.5 bg-neutral-50/50 border border-arbol/20 rounded-sm text-arbol text-sm focus:outline-none focus:border-arbol focus:bg-white focus:ring-1 focus:ring-arbol/30 transition-all placeholder:text-arbol/30"
+          />
+        </div>
+
+        <div id="campo-clave">
+          <div class="flex items-center justify-between mb-1.5">
+            <label for="clave" class="text-xs uppercase tracking-wider font-mono text-arbol/80">
+              Contraseña
+            </label>
+            <button
+              id="btn-olvido"
+              type="button"
+              class="text-xs text-arbol/60 hover:text-arbol underline underline-offset-2 transition-colors"
+            >
+              ¿Olvidaste tu contraseña?
+            </button>
+          </div>
+          <input
+            type="password"
+            id="clave"
+            autocomplete="current-password"
+            placeholder="••••••••"
+            class="w-full px-3.5 py-2.5 bg-neutral-50/50 border border-arbol/20 rounded-sm text-arbol text-sm focus:outline-none focus:border-arbol focus:bg-white focus:ring-1 focus:ring-arbol/30 transition-all placeholder:text-arbol/30"
+          />
+        </div>
+
+        <button
+          type="submit"
+          id="btn-submit"
+          class="w-full mt-2 py-3 px-4 bg-arbol text-desierto font-medium text-sm rounded-sm hover:bg-arbolHover hover:shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <span id="btn-texto">Ingresar al sistema</span>
+          <span id="btn-spinner" class="hidden h-4 w-4 border-2 border-desierto border-t-transparent rounded-full animate-spin"></span>
+        </button>
+
+        <!-- Botón para cancelar modo recuperación -->
+        <button
+          id="btn-volver-login"
+          type="button"
+          class="hidden w-full text-center text-xs text-arbol/70 hover:text-arbol pt-2 transition-colors"
+        >
+          ← Volver al inicio de sesión
+        </button>
+      </form>
+
+    </div>
+  </div>
 </Layout>
+
+<script>
+  import { iniciarSesion, registrarUsuario, recuperarClave } from "../lib/auth";
+
+  type ModoAuth = "login" | "registro" | "recuperar";
+  let modo: ModoAuth = "login";
+
+  const contenedorTabs = document.querySelector<HTMLElement>("#contenedor-tabs")!;
+  const tabLogin = document.querySelector<HTMLButtonElement>("#tab-login")!;
+  const tabRegistro = document.querySelector<HTMLButtonElement>("#tab-registro")!;
+  const campoClave = document.querySelector<HTMLElement>("#campo-clave")!;
+  const claveInput = document.querySelector<HTMLInputElement>("#clave")!;
+  const correoInput = document.querySelector<HTMLInputElement>("#correo")!;
+  const btnSubmit = document.querySelector<HTMLButtonElement>("#btn-submit")!;
+  const btnTexto = document.querySelector<HTMLElement>("#btn-texto")!;
+  const btnSpinner = document.querySelector<HTMLElement>("#btn-spinner")!;
+  const btnOlvido = document.querySelector<HTMLButtonElement>("#btn-olvido")!;
+  const btnVolver = document.querySelector<HTMLButtonElement>("#btn-volver-login")!;
+  const subtitulo = document.querySelector<HTMLElement>("#subtitulo-auth")!;
+  const alerta = document.querySelector<HTMLElement>("#alerta")!;
+  const form = document.querySelector<HTMLFormElement>("#auth-form")!;
+
+  function setModo(nuevoModo: ModoAuth) {
+    modo = nuevoModo;
+    alerta.classList.add("hidden");
+
+    if (modo === "login") {
+      contenedorTabs.classList.remove("hidden");
+      campoClave.classList.remove("hidden");
+      claveInput.required = true;
+      btnVolver.classList.add("hidden");
+      subtitulo.textContent = "Acceso al Sistema";
+      tabLogin.classList.add("border-arbol", "text-arbol", "font-semibold");
+      tabLogin.classList.remove("border-transparent", "text-arbol/50");
+      tabRegistro.classList.add("border-transparent", "text-arbol/50");
+      tabRegistro.classList.remove("border-arbol", "text-arbol", "font-semibold");
+      btnTexto.textContent = "Ingresar al sistema";
+    } else if (modo === "registro") {
+      contenedorTabs.classList.remove("hidden");
+      campoClave.classList.remove("hidden");
+      claveInput.required = true;
+      btnVolver.classList.add("hidden");
+      subtitulo.textContent = "Registro Institucional";
+      tabRegistro.classList.add("border-arbol", "text-arbol", "font-semibold");
+      tabRegistro.classList.remove("border-transparent", "text-arbol/50");
+      tabLogin.classList.add("border-transparent", "text-arbol/50");
+      tabLogin.classList.remove("border-arbol", "text-arbol", "font-semibold");
+      btnTexto.textContent = "Registrarse y crear cuenta";
+    } else if (modo === "recuperar") {
+      contenedorTabs.classList.add("hidden");
+      campoClave.classList.add("hidden");
+      claveInput.required = false;
+      btnVolver.classList.remove("hidden");
+      subtitulo.textContent = "Recuperación de Acceso";
+      btnTexto.textContent = "Enviar enlace de recuperación";
+    }
+  }
+
+  tabLogin.addEventListener("click", () => setModo("login"));
+  tabRegistro.addEventListener("click", () => setModo("registro"));
+  btnOlvido.addEventListener("click", () => setModo("recuperar"));
+  btnVolver.addEventListener("click", () => setModo("login"));
+
+  function mostrarAlerta(tipo: "error" | "exito", mensaje: string) {
+    alerta.textContent = mensaje;
+    alerta.className = `p-3.5 text-xs sm:text-sm rounded border leading-relaxed font-sans ${
+      tipo === "error" 
+        ? "bg-red-50 text-red-800 border-red-200" 
+        : "bg-emerald-50 text-emerald-800 border-emerald-200"
+    }`;
+    alerta.classList.remove("hidden");
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    alerta.classList.add("hidden");
+
+    const correo = correoInput.value.trim();
+    const clave = claveInput.value;
+
+    btnSubmit.disabled = true;
+    btnSpinner.classList.remove("hidden");
+
+    try {
+      if (modo === "login") {
+        const res = await iniciarSesion(correo, clave);
+        if (!res.ok) {
+          mostrarAlerta("error", res.mensaje);
+        } else {
+          window.location.href = res.rol === "admin" ? "/dashboard" : "/panel";
+        }
+      } else if (modo === "registro") {
+        const res = await registrarUsuario(correo, clave);
+        if (!res.ok) {
+          mostrarAlerta("error", res.mensaje);
+        } else {
+          mostrarAlerta("exito", res.mensaje);
+          form.reset();
+        }
+      } else if (modo === "recuperar") {
+        const res = await recuperarClave(correo);
+        if (!res.ok) {
+          mostrarAlerta("error", res.mensaje);
+        } else {
+          mostrarAlerta("exito", res.mensaje);
+        }
+      }
+    } catch {
+      mostrarAlerta("error", "Ocurrió un error inesperado.");
+    } finally {
+      btnSubmit.disabled = false;
+      btnSpinner.classList.add("hidden");
+    }
+  });
+</script>

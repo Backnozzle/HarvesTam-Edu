@@ -1,0 +1,177 @@
+---
+interface ImagenFruto {
+  src: string;
+  alt: string;
+  pie: string;
+}
+
+const imagenes: ImagenFruto[] = [
+  {
+    src: "/Fruto.webp", 
+    alt: "Legumbres maduras de tamarugo en racimo sobre rama leñosa espinosa",
+    pie: "Legumbres maduras de forma semicircular adheridas a ramas espinosas."
+  },
+  {
+    src: "/Fruto2.webp", 
+    alt: "Vainas verdes y carnosas de tamarugo durante la fase fenológica de cuajado",
+    pie: "Fase fenológica de cuajado: frutos juveniles carnosos de color verde vivo."
+  },
+  {
+    src: "/Fruto3.webp", 
+    alt: "Disección de fruto seco de tamarugo mostrando el mesocarpio fibroso y la semilla",
+    pie: "Estructura interna: mesocarpio fibroso-azucarado y semilla con cubierta protectora."
+  }
+];
+---
+
+<section class="w-full bg-desierto text-arbol px-6 sm:px-12 md:px-16 py-16 sm:py-24 border-t border-arbol/10">
+  <div class="max-w-7xl mx-auto">
+
+    <div class="space-y-4 max-w-3xl mb-12 sm:mb-16">
+      <h2 class="font-serif text-2xl sm:text-3xl font-medium tracking-tight">
+        El fruto: clave de subsistencia y regeneración del bosque
+      </h2>
+     
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+      
+      <div class="space-y-3">
+        <div class="embla overflow-hidden rounded-sm border border-arbol/20 shadow-md">
+          <div class="embla__container flex">
+            {imagenes.map((img) => (
+              <div class="embla__slide flex-[0_0_100%] min-w-0">
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  width="800"
+                  height="450"
+                  class="w-full h-auto aspect-video object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div class="py-2.5 px-3 bg-desierto border-t border-arbol/10 text-right">
+                  <span class="text-sm italic text-arbol/70">
+                    {img.pie}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-1">
+          <div class="flex items-center gap-1.5" id="indicadores-dots">
+            {imagenes.map((_, i) => (
+              <button
+                type="button"
+                class="w-2 h-2 rounded-full border border-arbol/40 dot-indicator transition-all"
+                data-index={i}
+                aria-label={`Ir a foto ${i + 1}`}
+              ></button>
+            ))}
+          </div>
+
+          <div class="flex gap-2 text-xs">
+            <button
+              id="btn-prev"
+              type="button"
+              class="px-2.5 py-1 rounded-sm border border-arbol/30 bg-transparent text-arbol hover:bg-arbol hover:text-desierto hover:border-arbol transition-colors duration-200 cursor-pointer"
+            >
+              Ant
+            </button>
+            <button
+              id="btn-next"
+              type="button"
+              class="px-2.5 py-1 rounded-sm border border-arbol/30 bg-transparent text-arbol hover:bg-arbol hover:text-desierto hover:border-arbol transition-colors duration-200 cursor-pointer"
+            >
+              Sig
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <div class="space-y-2">
+          <h3 class="font-serif text-xl sm:text-2xl font-medium tracking-tight">
+            El ciclo de la legumbre y su rol fitoecológico
+          </h3>
+          <p class="text-sm sm:text-base leading-relaxed text-arbol/80 text-justify">
+            A diferencia de otras leguminosas que abren sus vainas al madurar para arrojar sus simientes al viento, el fruto del tamarugo es indehiscente. Permanece cerrado y carnoso para inducir el consumo de herbívoros locales, convirtiendo la dispersión endozoócora en su única vía evolutiva eficaz para propagarse sobre arenas hipersalinas.
+          </p>
+        </div>
+
+        <div class="space-y-4 pt-4 border-t border-arbol/15">
+          <div class="space-y-1">
+            <span class="text-s tracking-wider text-arbol font-medium block">
+              Dormancia y germinación adaptada
+            </span>
+            <p class="text-xs sm:text-sm text-arbol/80 leading-relaxed text-justify">
+              Las semillas poseen una cutícula dura prácticamente impenetrable por el agua. Los ácidos estomacales de los animales desgastan esta barrera sin dañar el embrión, rompiendo la latencia para que brote únicamente cuando las condiciones orgánicas mínimas están presentes.
+            </p>
+          </div>
+
+          <div class="space-y-1">
+            <span class="text-s tracking-wider text-arbol font-medium block">
+              Sostén del ecosistema desértico
+            </span>
+            <p class="text-xs sm:text-sm text-arbol/80 leading-relaxed text-justify">
+              La pulpa del mesocarpio es densa en azúcares naturales y nutrientes. Su caída masiva durante el verano alimenta tanto al ganado histórico como a insectos y roedores endémicos que mantienen activa la red biológica bajo el dosel.
+            </p>
+          </div>
+
+          <div class="space-y-1">
+            <span class="text-s tracking-wider text-arbol font-medium block">
+              Alerta de vitalidad fisiológica
+            </span>
+            <p class="text-xs sm:text-sm text-arbol/80 leading-relaxed text-justify">
+              Cuando el árbol entra en estrés hídrico severo por agotamiento del manto subterráneo, la fructificación es el primer proceso que la planta sacrifica: las flores abortan y las pocas vainas que cuajan caen raquíticas y desprovistas de semillas viables.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<script>
+  import EmblaCarousel from "embla-carousel";
+
+  const viewportNode = document.querySelector<HTMLElement>(".embla");
+  const btnPrev = document.querySelector<HTMLButtonElement>("#btn-prev");
+  const btnNext = document.querySelector<HTMLButtonElement>("#btn-next");
+  const dots = document.querySelectorAll<HTMLButtonElement>(".dot-indicator");
+
+  if (viewportNode) {
+    const embla = EmblaCarousel(viewportNode, { loop: true });
+
+    const actualizarDots = () => {
+      const index = embla.selectedScrollSnap();
+      dots.forEach((dot, i) => {
+        if (i === index) {
+          dot.classList.add("bg-arbol", "w-4");
+          dot.classList.remove("bg-transparent");
+        } else {
+          dot.classList.remove("bg-arbol", "w-4");
+          dot.classList.add("bg-transparent");
+        }
+      });
+    };
+
+    btnPrev?.addEventListener("click", () => embla.scrollPrev());
+    btnNext?.addEventListener("click", () => embla.scrollNext());
+
+    dots.forEach((dot) => {
+      dot.addEventListener("click", () => {
+        const index = Number(dot.dataset.index);
+        embla.scrollTo(index);
+      });
+    });
+
+    embla.on("select", actualizarDots);
+    embla.on("init", actualizarDots);
+  }
+</script>

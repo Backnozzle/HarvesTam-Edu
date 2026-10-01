@@ -15,6 +15,7 @@
     "@supabase/supabase-js": "^2.117.2",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.3.5",
+    "embla-carousel": "^8.6.0",
     "tailwindcss": "^4.3.3"
   },
   "allowScripts": {

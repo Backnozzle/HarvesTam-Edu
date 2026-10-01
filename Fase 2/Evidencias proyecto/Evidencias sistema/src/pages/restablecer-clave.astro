@@ -1,0 +1,93 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Nueva contraseña · HarvesTam - Edu">
+  <div class="min-h-[75vh] flex items-center justify-center px-4 sm:px-6 py-12">
+    <div class="w-full max-w-md bg-white rounded-sm p-8 sm:p-10 shadow-xl space-y-6">
+      
+      <div class="text-center space-y-1">
+        <h1 class="font-serif italic text-3xl font-medium text-arbol">
+          Actualizar contraseña
+        </h1>
+        <p class="text-xs text-arbol/60 font-mono uppercase tracking-wider">
+          Ingresa tus nuevas credenciales
+        </p>
+      </div>
+
+      <div id="alerta" class="hidden p-3.5 text-xs sm:text-sm rounded border leading-relaxed font-sans"></div>
+
+      <form id="form-restablecer" class="space-y-4">
+        <div>
+          <label for="nueva-clave" class="block text-xs uppercase tracking-wider font-mono text-arbol/80 mb-1.5">
+            Nueva contraseña
+          </label>
+          <input
+            type="password"
+            id="nueva-clave"
+            required
+            placeholder="Mínimo 8 caracteres (A-Z, a-z, 0-9)"
+            class="w-full px-3.5 py-2.5 bg-neutral-50/50 border border-arbol/20 rounded-sm text-arbol text-sm focus:outline-none focus:border-arbol focus:bg-white focus:ring-1 focus:ring-arbol/30 transition-all placeholder:text-arbol/30"
+          />
+        </div>
+
+        <button
+          type="submit"
+          id="btn-guardar"
+          class="w-full mt-2 py-3 px-4 bg-arbol text-desierto font-medium text-sm rounded-sm hover:bg-arbolHover active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <span id="btn-texto">Guardar nueva contraseña</span>
+          <span id="btn-spinner" class="hidden h-4 w-4 border-2 border-desierto border-t-transparent rounded-full animate-spin"></span>
+        </button>
+      </form>
+
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { supabase } from "../lib/supabase";
+  import { actualizarClave } from "../lib/auth";
+
+  const form = document.querySelector<HTMLFormElement>("#form-restablecer")!;
+  const claveInput = document.querySelector<HTMLInputElement>("#nueva-clave")!;
+  const btnGuardar = document.querySelector<HTMLButtonElement>("#btn-guardar")!;
+  const btnTexto = document.querySelector<HTMLElement>("#btn-texto")!;
+  const btnSpinner = document.querySelector<HTMLElement>("#btn-spinner")!;
+  const alerta = document.querySelector<HTMLElement>("#alerta")!;
+
+  function mostrarAlerta(tipo: "error" | "exito", mensaje: string) {
+    alerta.textContent = mensaje;
+    alerta.className = `p-3.5 text-xs sm:text-sm rounded border leading-relaxed font-sans ${
+      tipo === "error" 
+        ? "bg-red-50 text-red-800 border-red-200" 
+        : "bg-emerald-50 text-emerald-800 border-emerald-200"
+    }`;
+    alerta.classList.remove("hidden");
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    alerta.classList.add("hidden");
+
+    btnGuardar.disabled = true;
+    btnSpinner.classList.remove("hidden");
+
+    const res = await actualizarClave(claveInput.value);
+
+    if (!res.ok) {
+      btnGuardar.disabled = false;
+      btnSpinner.classList.add("hidden");
+      mostrarAlerta("error", res.mensaje);
+    } else {
+      // Destruir la sesión temporal para obligar al usuario a iniciar sesión formal
+      await supabase.auth.signOut();
+
+      mostrarAlerta("exito", "Contraseña cambiada exitosamente. Redirigiendo al inicio de sesión...");
+      
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1800);
+    }
+  });
+</script>

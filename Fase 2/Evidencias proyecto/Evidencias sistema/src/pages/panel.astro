@@ -1,7 +1,80 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import SkeletonPanel from "../components/SkeletonPanel.astro";
 ---
-<Layout title="Panel de usuario">
-  <h1 class="text-2xl font-semibold"> DASHBOARD </h1>
-  <p>En construcción.</p>
+
+<Layout title="Panel de Monitoreo · HarvesTam - Edu">
+  <!-- 1. Estado de carga inicial (visible por defecto) -->
+  <div id="contenedor-skeleton">
+    <SkeletonPanel />
+  </div>
+
+  <!-- 2. Contenido real del panel (oculto hasta confirmar permisos) -->
+  <main id="contenido-panel" class="hidden min-h-[80vh] py-8 px-4 sm:px-6 max-w-6xl mx-auto space-y-8 animate-in">
+   
+    <header class="border-b border-arbol/15 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h1 class="font-serif italic text-3xl font-medium text-arbol tracking-tight">
+          Panel de Monitoreo
+        </h1>
+        <p class="text-xs font-mono uppercase tracking-wider text-arbol/70 mt-1">
+          ACCESO AUTENTICADO · <span id="correo-usuario" class="font-semibold text-arbol font-mono">...</span>
+        </p>
+      </div>
+    </header>
+
+    <!-- Tarjeta con fuente sans clara para lectura -->
+    <section class="bg-white border border-arbol/15 rounded-sm p-8 shadow-sm font-sans">
+      <div class="max-w-xl space-y-3">
+        <h2 class="font-serif text-xl font-medium text-arbol tracking-tight">
+          Área de trabajo preparada
+        </h2>
+        <p class="text-sm text-arbol/80 leading-relaxed font-sans font-normal">
+          Este espacio queda listo para recibir las entradas de datos, consultas y métricas una vez consolidado el modelo.
+        </p>
+      </div>
+    </section>
+  </main>
 </Layout>
+
+<style>
+  @keyframes entradaSuave {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-in {
+    animation: entradaSuave 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+</style>
+
+<script>
+  import { protegerRuta } from "../lib/guard";
+
+  async function inicializarVista() {
+    const estado = await protegerRuta();
+
+    if (estado.permitido) {
+      // Inyectar datos del usuario autenticado
+      const correoSpan = document.querySelector<HTMLElement>("#correo-usuario");
+      if (correoSpan && estado.correo) {
+        correoSpan.textContent = estado.correo;
+      }
+
+      // Reemplazo limpio: ocultar skeleton y mostrar contenido real
+      const skeleton = document.querySelector<HTMLElement>("#contenedor-skeleton");
+      const contenido = document.querySelector<HTMLElement>("#contenido-panel");
+
+      if (skeleton) skeleton.classList.add("hidden");
+      if (contenido) contenido.classList.remove("hidden");
+    }
+  }
+
+  inicializarVista();
+</script>
