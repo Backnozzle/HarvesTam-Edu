@@ -6,13 +6,12 @@ const navegacion = [
 ];
 
 const fuentes = [
-  { nombre: "CONAF · Pampa del Tamarugal", url: "https://www.conaf.cl" },
-  { nombre: "Catastro Vegetacional (MMA)", url: "https://mma.gob.cl" },
-  { nombre: "Duoc UC Melipilla", url: "https://www.duoc.cl" },
+  { nombre: "CONAF", url: "https://www.conaf.cl" },
+  { nombre: "Ministerio del medio ambiente (MMA)", url: "https://mma.gob.cl" },
+  { nombre: "Reserva Pampa del tamarugal", url: "https://www.conaf.cl/parque_nacionales/reserva-nacional-pampa-del-tamarugal/" },
 ];
 ---
 
-<!-- Fondo desertico -->
 <footer class="w-full bg-desierto text-desierto pt-8">
 
   <div class="w-full bg-arbol rounded-tl-[4rem] sm:rounded-tl-[6rem] md:rounded-tl-[8rem] px-6 sm:px-12 md:px-16 pt-16 sm:pt-20 pb-8 overflow-hidden">
@@ -29,9 +28,8 @@ const fuentes = [
           </p>
         </div>
 
-        <!-- Columna Central: Navegación (3 columnas) -->
         <div class="md:col-span-3 space-y-3">
-          <h4 class="font-mono text-xs tracking-widest uppercase text-desierto/60 font-semibold">
+          <h4 class="font-mono text-xs tracking-widest uppercase text-desierto font-semibold">
             Navegación
           </h4>
           <ul class="space-y-2 text-sm text-desierto/80 font-sans">
@@ -46,7 +44,7 @@ const fuentes = [
         </div>
 
         <div class="md:col-span-3 space-y-3">
-          <h4 class="font-mono text-xs tracking-widest uppercase text-desierto/60 font-semibold">
+          <h4 class="font-mono text-xs tracking-widest uppercase text-desierto font-semibold">
             Contexto & Fuentes
           </h4>
           <ul class="space-y-2 text-sm text-desierto/80 font-sans">
@@ -59,7 +57,7 @@ const fuentes = [
                   class="inline-flex items-center gap-1 hover:text-desierto hover:underline underline-offset-4 transition-colors"
                 >
                   {f.nombre}
-                  <span class="text-xs opacity-60">↗</span>
+                  <span class="text-xs opacity-60"></span>
                 </a>
               </li>
             ))}
@@ -75,8 +73,8 @@ const fuentes = [
       </div>
 
       <div class="pt-8 sm:pt-12 text-center select-none overflow-hidden">
-        <span class="block font-serif italic text-desierto text-[14vw] leading-[0.8] tracking-tight font-medium opacity-95">
-          HarvesTam
+        <span class="block font-serif italic text-desierto text-[10vw] leading-[0.8] tracking-tight font-medium opacity-95">
+          HarvesTam - Edu
         </span>
       </div>
 

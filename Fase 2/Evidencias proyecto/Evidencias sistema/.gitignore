@@ -23,3 +23,11 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+#Relacionado al acuerdo de uso
+.csv
+.pkl
+.joblib
+.xls
+.xlsx
+

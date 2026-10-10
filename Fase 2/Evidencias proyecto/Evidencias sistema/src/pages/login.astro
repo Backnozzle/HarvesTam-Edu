@@ -2,20 +2,19 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="Acceso institucional · HarvesTam - Edu">
+<Layout title="Acceso · HarvesTam - Edu">
   <div class="min-h-[75vh] flex items-center justify-center px-4 sm:px-6 py-12">
     <div class="w-full max-w-md bg-white rounded-sm p-8 sm:p-10 shadow-xl space-y-6 animate-in">
       
       <div class="text-center space-y-1">
-        <h1 class="font-serif italic text-3xl font-medium text-arbol tracking-tight">
+        <h1 class="font-serif text-3xl font-medium text-arbol tracking-tight">
           HarvesTam · Edu
         </h1>
-        <p id="subtitulo-auth" class="text-xs text-arbol/60 font-mono uppercase tracking-wider">
+        <p id="subtitulo-auth" class="text-xs text-arbol/60  uppercase tracking-wider">
           Acceso al Sistema
         </p>
       </div>
 
-      <!-- Pestañas (ocultas en modo recuperación) -->
       <div id="contenedor-tabs" class="flex border-b border-arbol/15 text-sm font-medium">
         <button
           id="tab-login"
@@ -83,13 +82,12 @@ import Layout from "../layouts/Layout.astro";
           <span id="btn-spinner" class="hidden h-4 w-4 border-2 border-desierto border-t-transparent rounded-full animate-spin"></span>
         </button>
 
-        <!-- Botón para cancelar modo recuperación -->
         <button
           id="btn-volver-login"
           type="button"
           class="hidden w-full text-center text-xs text-arbol/70 hover:text-arbol pt-2 transition-colors"
         >
-          ← Volver al inicio de sesión
+          Volver al inicio de sesión
         </button>
       </form>
 
@@ -138,7 +136,7 @@ import Layout from "../layouts/Layout.astro";
       campoClave.classList.remove("hidden");
       claveInput.required = true;
       btnVolver.classList.add("hidden");
-      subtitulo.textContent = "Registro Institucional";
+      subtitulo.textContent = "Registro de Usuario";
       tabRegistro.classList.add("border-arbol", "text-arbol", "font-semibold");
       tabRegistro.classList.remove("border-transparent", "text-arbol/50");
       tabLogin.classList.add("border-transparent", "text-arbol/50");
