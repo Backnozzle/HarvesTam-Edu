@@ -1,262 +1,240 @@
 ---
 import Layout from "../layouts/Layout.astro";
+
+const inputClase =
+  "w-full px-3.5 py-2.5 bg-neutral-50/50 border border-arbol/20 rounded-sm text-arbol text-sm font-serif focus:outline-none focus:border-arbol focus:bg-white focus:ring-1 focus:ring-arbol/30 transition-all placeholder:text-arbol/30";
+const etiquetaClase = "block text-xs uppercase tracking-wider font-mono text-arbol/80 mb-1.5";
 ---
 
 <Layout title="Estimar Carga Frutal · HarvesTam">
-  <div class="min-h-[75vh] flex items-center justify-center px-4 sm:px-6 py-12">
+  <div id="contenido" class="hidden min-h-[75vh] flex items-center justify-center px-4 sm:px-6 py-12">
     <div class="w-full max-w-2xl bg-white rounded-lg p-8 sm:p-10 shadow-xl space-y-6 border border-neutral-100">
-      
       <div class="text-center space-y-2">
-        <h1 class="font-serif text-3xl font-medium text-arbol tracking-tight">
-          Estimación de Carga Frutal
-        </h1>
-        <p class="text-xs font-mono text-arbol/60 uppercase tracking-widest">
-          Modelo Probabilístico · Prosopis tamarugo
-        </p>
+        <h1 class="font-serif text-3xl font-medium text-arbol tracking-tight">Estimación de Carga Frutal</h1>
+        <p class="text-xs font-mono text-arbol/60 uppercase tracking-widest">Rangos de referencia · Prosopis tamarugo</p>
       </div>
 
-      <div id="alerta" class="hidden p-4 text-xs sm:text-sm rounded border leading-relaxed font-sans transition-all duration-300 shadow-sm"></div>
+      <div id="alerta" role="alert" class="hidden p-4 text-xs sm:text-sm rounded border leading-relaxed font-serif transition-all duration-300 shadow-sm bg-red-50 text-red-800 border-red-200"></div>
 
       <form id="prediction-form" class="space-y-5">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          
           <div>
-            <label for="month" class="block text-xs uppercase tracking-wider font-mono text-arbol/80 mb-1.5">
-              Mes
-            </label>
-            <input
-              type="number"
-              min="1"
-              max="12"
-              id="month"
-              name="month"
-              required
-              placeholder="Ej. 10"
-              class="w-full px-3.5 py-2.5 bg-neutral-50/50 border border-arbol/20 rounded-sm text-arbol text-sm font-serif focus:outline-none focus:border-arbol focus:bg-white focus:ring-1 focus:ring-arbol/30 transition-all placeholder:text-arbol/30"
-            />
+            <label for="mes" class={etiquetaClase}>Mes</label>
+            <select id="mes" name="mes" required class={inputClase}>
+              <option value="" disabled selected>Seleccione</option>
+              <option value="2">Febrero</option>
+              <option value="12">Diciembre</option>
+            </select>
           </div>
-
           <div>
-            <label for="year" class="block text-xs uppercase tracking-wider font-mono text-arbol/80 mb-1.5">
-              Año
-            </label>
-            <input
-              type="number"
-              min="2000"
-              max="2100"
-              id="year"
-              name="year"
-              required
-              placeholder="Ej. 2026"
-              class="w-full px-3.5 py-2.5 bg-neutral-50/50 border border-arbol/20 rounded-sm text-arbol text-sm font-serif focus:outline-none focus:border-arbol focus:bg-white focus:ring-1 focus:ring-arbol/30 transition-all placeholder:text-arbol/30"
-            />
+            <label for="diametro" class={etiquetaClase}>Diámetro de copa (m)</label>
+            <input type="number" step="0.01" min="0" inputmode="decimal" id="diametro" name="diametro" required placeholder="Ej. 1.10" class={inputClase} />
           </div>
-
-          <div>
-            <label for="DIAMETER_ARBOL" class="block text-xs uppercase tracking-wider font-mono text-arbol/80 mb-1.5">
-              Diámetro del Árbol
-            </label>
-            <input
-              type="number"
-              step="any"
-              min="1"
-              id="DIAMETER_ARBOL"
-              name="DIAMETER_ARBOL"
-              required
-              placeholder="Ej. 35.5"
-              class="w-full px-3.5 py-2.5 bg-neutral-50/50 border border-arbol/20 rounded-sm text-arbol text-sm font-serif focus:outline-none focus:border-arbol focus:bg-white focus:ring-1 focus:ring-arbol/30 transition-all placeholder:text-arbol/30"
-            />
-          </div>
-
-          <div>
-            <label for="humedad" class="block text-xs uppercase tracking-wider font-mono text-arbol/80 mb-1.5">
-              Humedad
-            </label>
-            <input
-              type="number"
-              step="any"
-              min="0"
-              max="100"
-              id="humedad"
-              name="humedad"
-              required
-              placeholder="Ej. 48.5"
-              class="w-full px-3.5 py-2.5 bg-neutral-50/50 border border-arbol/20 rounded-sm text-arbol text-sm font-serif focus:outline-none focus:border-arbol focus:bg-white focus:ring-1 focus:ring-arbol/30 transition-all placeholder:text-arbol/30"
-            />
-          </div>
-
-          <div>
-            <label for="viento_vel" class="block text-xs uppercase tracking-wider font-mono text-arbol/80 mb-1.5">
-              Velocidad de Viento
-            </label>
-            <input
-              type="number"
-              step="any"
-              min="0"
-              id="viento_vel"
-              name="viento_vel"
-              required
-              placeholder="Ej. 12.0"
-              class="w-full px-3.5 py-2.5 bg-neutral-50/50 border border-arbol/20 rounded-sm text-arbol text-sm font-serif focus:outline-none focus:border-arbol focus:bg-white focus:ring-1 focus:ring-arbol/30 transition-all placeholder:text-arbol/30"
-            />
-          </div>
-
-          <div>
-            <label for="temp_max" class="block text-xs uppercase tracking-wider font-mono text-arbol/80 mb-1.5">
-              Temperatura Máxima
-            </label>
-            <input
-              type="number"
-              step="any"
-              id="temp_max"
-              name="temp_max"
-              required
-              placeholder="Ej. 28.0"
-              class="w-full px-3.5 py-2.5 bg-neutral-50/50 border border-arbol/20 rounded-sm text-arbol text-sm font-serif focus:outline-none focus:border-arbol focus:bg-white focus:ring-1 focus:ring-arbol/30 transition-all placeholder:text-arbol/30"
-            />
-          </div>
-
-          <div class="sm:col-span-2">
-            <label for="temp_min" class="block text-xs uppercase tracking-wider font-mono text-arbol/80 mb-1.5">
-              Temperatura Mínima
-            </label>
-            <input
-              type="number"
-              step="any"
-              id="temp_min"
-              name="temp_min"
-              required
-              placeholder="Ej. 10.5"
-              class="w-full px-3.5 py-2.5 bg-neutral-50/50 border border-arbol/20 rounded-sm text-arbol text-sm font-serif focus:outline-none focus:border-arbol focus:bg-white focus:ring-1 focus:ring-arbol/30 transition-all placeholder:text-arbol/30"
-            />
-          </div>
-
         </div>
+        <p class="text-xs font-sans text-arbol/60">
+          El diámetro se mide en metros, a 1,20 m de altura. El modelo solo tiene datos de febrero y diciembre.
+        </p>
 
-        <button
-          type="submit"
-          id="btn-submit"
-          class="w-full mt-6 py-3.5 px-4 bg-arbol text-white font-serif tracking-wide text-sm rounded-sm hover:bg-neutral-800 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
-        >
-          <span id="btn-texto">Ejecutar Inferencia Probabilística</span>
+        <button type="submit" id="btn-submit" class="w-full mt-2 py-3.5 px-4 bg-arbol text-white font-serif tracking-wide text-sm rounded-sm hover:bg-neutral-800 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm disabled:opacity-60 disabled:cursor-not-allowed">
+          <span id="btn-texto">Estimar</span>
           <span id="btn-spinner" class="hidden h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
         </button>
       </form>
 
-      <div id="result-container" class="hidden p-5 bg-neutral-50 border border-arbol/20 rounded-sm space-y-3">
+      <div id="result-container" class="hidden p-5 bg-neutral-50 border border-arbol/20 rounded-sm space-y-4">
         <div class="flex items-center justify-between border-b border-arbol/10 pb-2">
           <h2 class="text-xs uppercase tracking-wider font-mono text-arbol/80 font-semibold">Resultado de la Estimación</h2>
-          <span class="text-[10px] font-mono bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">Modelo Validado</span>
+          <span class="text-[10px] font-mono bg-neutral-200 text-arbol px-2 py-0.5 rounded">Referencia estadística</span>
         </div>
-        
-        <div id="result-output" class="space-y-2 font-serif">
+
+        <div class="space-y-3 font-serif">
+          <div>
+            <p class="text-xs font-sans text-arbol/70">Valor central de referencia (mediana esperada)</p>
+            <p class="text-3xl text-arbol font-semibold"><span data-campo="mediana"></span> g/m²</p>
+          </div>
+          <div class="text-sm text-arbol/90 font-sans space-y-1">
+            <p>Rango probable (8 de cada 10 casos): <span data-campo="q10"></span> a <span data-campo="q90"></span> g/m²</p>
+            <p>Máximo esperable (percentil 90): <span data-campo="q90"></span> g/m²</p>
+          </div>
+
+          <div id="bloque-utilidad" class="hidden pt-2 border-t border-arbol/10 flex flex-wrap items-center justify-between gap-2 font-sans">
+            <span class="text-xs text-arbol/80">¿Te resultó útil esta referencia?</span>
+            <div id="botones-utilidad" class="inline-flex items-center gap-2">
+              <button type="button" id="btn-util-si" class="px-3 py-1 text-xs font-mono border border-arbol/25 rounded hover:bg-arbol hover:text-white transition-colors cursor-pointer">Sí</button>
+              <button type="button" id="btn-util-no" class="px-3 py-1 text-xs font-mono border border-arbol/25 rounded hover:bg-neutral-200 transition-colors cursor-pointer">No</button>
+            </div>
+            <span id="msg-utilidad" class="hidden text-xs font-mono text-emerald-800">Gracias por tu valoración</span>
+          </div>
+
+          <p class="text-xs font-sans text-arbol/60 border-t border-arbol/10 pt-2">
+            Es una referencia estadística y no un pronóstico de cosecha: la producción de árboles del mismo tamaño varía mucho.
+            Versión del modelo: <span data-campo="version_modelo"></span>.
+          </p>
         </div>
       </div>
-
     </div>
   </div>
 </Layout>
 
 <script>
+import { registrarEstimacion, valorarEstimacion } from "../lib/estimaciones";
+import { protegerRuta } from "../lib/guard";
+import { supabase } from "../lib/supabase";
+
+  protegerRuta().then((estado) => {
+    if (estado.permitido) {
+      document.getElementById("contenido")?.classList.remove("hidden");
+    }
+  });
+
   const form = document.querySelector<HTMLFormElement>("#prediction-form")!;
   const resultContainer = document.querySelector<HTMLElement>("#result-container")!;
-  const resultOutput = document.querySelector<HTMLElement>("#result-output")!;
   const alerta = document.querySelector<HTMLElement>("#alerta")!;
   const btnSubmit = document.querySelector<HTMLButtonElement>("#btn-submit")!;
   const btnSpinner = document.querySelector<HTMLElement>("#btn-spinner")!;
   const btnTexto = document.querySelector<HTMLElement>("#btn-texto")!;
 
-  function mostrarAlerta(tipo: "error" | "exito", mensaje: string) {
+  const bloqueUtilidad = document.querySelector<HTMLElement>("#bloque-utilidad")!;
+  const botonesUtilidad = document.querySelector<HTMLElement>("#botones-utilidad")!;
+  const msgUtilidad = document.querySelector<HTMLElement>("#msg-utilidad")!;
+  const btnUtilSi = document.querySelector<HTMLButtonElement>("#btn-util-si")!;
+  const btnUtilNo = document.querySelector<HTMLButtonElement>("#btn-util-no")!;
+
+  let ultimaEstimacionId: string | null = null;
+
+  function mostrarAlerta(mensaje: string) {
     alerta.textContent = mensaje;
-    alerta.className = `p-4 text-xs sm:text-sm rounded border leading-relaxed font-sans transition-all duration-300 shadow-sm ${
-      tipo === "error" 
-        ? "bg-red-50 text-red-800 border-red-200 font-serif" 
-        : "bg-emerald-50 text-emerald-800 border-emerald-200 font-serif"
-    }`;
     alerta.classList.remove("hidden");
   }
+
+  function rellenar(campo: string, valor: string) {
+    document
+      .querySelectorAll<HTMLElement>(`[data-campo="${campo}"]`)
+      .forEach((el) => (el.textContent = valor));
+  }
+
+  function cargando(si: boolean) {
+    btnSubmit.disabled = si;
+    btnSpinner.classList.toggle("hidden", !si);
+    btnTexto.textContent = si ? "Calculando..." : "Estimar";
+  }
+
+  const esNumero = (v: unknown) => typeof v === "number" && Number.isFinite(v);
+
+  async function enviarValoracion(util: boolean) {
+    if (!ultimaEstimacionId) return;
+    btnUtilSi.disabled = true;
+    btnUtilNo.disabled = true;
+    const ok = await valorarEstimacion(ultimaEstimacionId, util);
+    if (ok) {
+      botonesUtilidad.classList.add("hidden");
+      msgUtilidad.classList.remove("hidden");
+    } else {
+      btnUtilSi.disabled = false;
+      btnUtilNo.disabled = false;
+    }
+  }
+
+  btnUtilSi.addEventListener("click", () => enviarValoracion(true));
+  btnUtilNo.addEventListener("click", () => enviarValoracion(false));
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     alerta.classList.add("hidden");
     resultContainer.classList.add("hidden");
+    bloqueUtilidad.classList.add("hidden");
+    botonesUtilidad.classList.remove("hidden");
+    msgUtilidad.classList.add("hidden");
+    btnUtilSi.disabled = false;
+    btnUtilNo.disabled = false;
+    ultimaEstimacionId = null;
 
-    const formData = new FormData(form);
-    const data: Record<string, any> = {};
-    formData.forEach((value, key) => {
-      data[key] = isNaN(Number(value)) ? value : Number(value);
-    });
+    const mes = Number((form.elements.namedItem("mes") as HTMLSelectElement).value);
+    const diametro = Number((form.elements.namedItem("diametro") as HTMLInputElement).value);
 
-    if (Number(data.temp_max) < Number(data.temp_min)) {
-      mostrarAlerta("error", "Error de validación: La temperatura máxima no puede ser menor que la temperatura mínima.");
+    if (![2, 12].includes(mes)) {
+      mostrarAlerta("Seleccione febrero o diciembre.");
+      return;
+    }
+    if (!Number.isFinite(diametro) || diametro <= 0) {
+      mostrarAlerta("Ingrese un diámetro mayor a cero, en metros.");
       return;
     }
 
-    if (Number(data.DIAMETER_ARBOL) <= 0) {
-      mostrarAlerta("error", "Error de validación: El diámetro del árbol debe ser mayor a cero.");
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+    const usuarioId = data.session?.user?.id;
+
+    if (!token || !usuarioId) {
+      window.location.href = "/login";
       return;
     }
 
-    btnSubmit.setAttribute("disabled", "true");
-    btnSpinner.classList.remove("hidden");
-    btnTexto.textContent = "Calculando distribución probabilística...";
-
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
+    cargando(true);
     try {
-      const response = await fetch('/api/predict', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + (localStorage.getItem('token') || '')
-        },
-        body: JSON.stringify(data)
+      const response = await fetch("/api/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ mes, diametro }),
       });
 
-      if (!response.ok) {
-        throw new Error('Servidor no disponible');
+      if (response.status === 401) {
+        window.location.href = "/login";
+        return;
       }
 
-      const result = await response.json();
-      resultOutput.innerHTML = `
-        <div class="text-2xl text-arbol font-semibold">${result.estimacion} kg/m²</div>
-        <p class="text-xs text-arbol/70 font-sans">Incertidumbre asociada (σ): ± ${result.incertidumbre || '1.15'}</p>
-      `;
+      if (response.status === 422) {
+        const cuerpo = await response.json().catch(() => null);
+        mostrarAlerta(typeof cuerpo?.detail === "string" ? cuerpo.detail : "Los datos ingresados no son válidos.");
+        await registrarEstimacion({
+          usuario_id: usuarioId,
+          mes,
+          diametro,
+          estado: "rechazada",
+        });
+        return;
+      }
+
+      if (!response.ok) {
+        await registrarEstimacion({
+          usuario_id: usuarioId,
+          mes,
+          diametro,
+          estado: "error",
+        });
+        throw new Error("servicio no disponible");
+      }
+
+      const r = await response.json();
+      if (!esNumero(r.q10) || !esNumero(r.mediana) || !esNumero(r.q90)) {
+        throw new Error("respuesta inesperada");
+      }
+
+      const version = String(r.version_modelo ?? "");
+      ultimaEstimacionId = await registrarEstimacion({
+        usuario_id: usuarioId,
+        mes,
+        diametro,
+        q10: r.q10,
+        mediana: r.mediana,
+        q90: r.q90,
+        version_modelo: version,
+        estado: "aceptada",
+      });
+
+      rellenar("q10", r.q10.toLocaleString("es-CL"));
+      rellenar("mediana", r.mediana.toLocaleString("es-CL"));
+      rellenar("q90", r.q90.toLocaleString("es-CL"));
+      rellenar("version_modelo", version);
+
+      if (ultimaEstimacionId) {
+        bloqueUtilidad.classList.remove("hidden");
+      }
       resultContainer.classList.remove("hidden");
-      mostrarAlerta("exito", "Inferencia probabilística completada con éxito.");
-
-    } catch (err: any) {
-      const diametro = Number(data.DIAMETER_ARBOL) || 20;
-      const tMax = Number(data.temp_max) || 25;
-      const tMin = Number(data.temp_min) || 12;
-      const humedad = Number(data.humedad) || 50;
-
-      const areaCopa = Math.PI * Math.pow(diametro / 2, 2);
-      const diametroQuad = Math.pow(diametro, 2);
-      const amplitudTermica = tMax - tMin;
-
-      const prediccionMedia = (areaCopa * 0.18 + diametroQuad * 0.05 + amplitudTermica * 0.8 - humedad * 0.03 + 12.5).toFixed(2);
-      const desviacionStd = (Math.max(1.2, Number(prediccionMedia) * 0.14)).toFixed(2);
-      const limiteInferior = Math.max(0, Number(prediccionMedia) - 1.96 * Number(desviacionStd)).toFixed(2);
-      const limiteSuperior = (Number(prediccionMedia) + 1.96 * Number(desviacionStd)).toFixed(2);
-
-      resultOutput.innerHTML = `
-        <div class="flex items-baseline justify-between">
-          <span class="text-3xl text-arbol font-bold">${prediccionMedia}</span>
-          <span class="text-xs font-mono text-arbol/60">gramos / m² (Media Estimada)</span>
-        </div>
-        <div class="text-xs space-y-1 font-sans text-arbol/80 pt-1 border-t border-arbol/10">
-          <p>Incertidumbre (σ): ± ${desviacionStd} g/m²</p>
-          <p>Intervalo de Confianza (95%): [${limiteInferior} — ${limiteSuperior}] g/m²</p>
-        </div>
-      `;
-      
-      resultContainer.classList.remove("hidden");
-      mostrarAlerta("exito", "Predicción probabilística generada correctamente.");
+    } catch {
+      mostrarAlerta("El servicio de estimación no está disponible en este momento. Intente nuevamente más tarde.");
     } finally {
-      btnSubmit.removeAttribute("disabled");
-      btnSpinner.classList.add("hidden");
-      btnTexto.textContent = "Ejecutar Inferencia Probabilística";
+      cargando(false);
     }
   });
 </script>

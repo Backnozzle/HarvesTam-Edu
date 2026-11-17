@@ -5,19 +5,30 @@ import Layout from "../layouts/Layout.astro";
 <Layout title="Nueva contraseña · HarvesTam - Edu">
   <div class="min-h-[75vh] flex items-center justify-center px-4 sm:px-6 py-12">
     <div class="w-full max-w-md bg-white rounded-sm p-8 sm:p-10 shadow-xl space-y-6">
-      
       <div class="text-center space-y-1">
         <h1 class="font-serif italic text-3xl font-medium text-arbol">
           Actualizar contraseña
         </h1>
-        <p class="text-xs text-arbol/60 font-mono uppercase tracking-wider">
-          Ingresa tus nuevas credenciales
+        <p id="subtitulo-recuperar" class="text-xs text-arbol/60 font-mono uppercase tracking-wider">
+          Validando enlace de seguridad...
         </p>
       </div>
 
       <div id="alerta" class="hidden p-3.5 text-xs sm:text-sm rounded border leading-relaxed font-sans"></div>
 
-      <form id="form-restablecer" class="space-y-4">
+      <div id="bloque-expirado" class="hidden text-center space-y-4 pt-2">
+        <p class="text-sm font-sans text-arbol/80">
+          Este enlace de recuperación ya fue utilizado o ha expirado. Por seguridad, debes solicitar uno nuevo.
+        </p>
+        <a
+          href="/login"
+          class="inline-block w-full py-3 px-4 bg-arbol text-desierto font-medium text-sm rounded-sm hover:bg-arbolHover transition-colors"
+        >
+          Volver al inicio de sesión
+        </a>
+      </div>
+
+      <form id="form-restablecer" class="hidden space-y-4">
         <div>
           <label for="nueva-clave" class="block text-xs uppercase tracking-wider font-mono text-arbol/80 mb-1.5">
             Nueva contraseña
@@ -40,16 +51,17 @@ import Layout from "../layouts/Layout.astro";
           <span id="btn-spinner" class="hidden h-4 w-4 border-2 border-desierto border-t-transparent rounded-full animate-spin"></span>
         </button>
       </form>
-
     </div>
   </div>
 </Layout>
 
 <script>
-  import { supabase } from "../lib/supabase";
   import { actualizarClave } from "../lib/auth";
+import { supabase } from "../lib/supabase";
 
   const form = document.querySelector<HTMLFormElement>("#form-restablecer")!;
+  const bloqueExpirado = document.querySelector<HTMLElement>("#bloque-expirado")!;
+  const subtitulo = document.querySelector<HTMLElement>("#subtitulo-recuperar")!;
   const claveInput = document.querySelector<HTMLInputElement>("#nueva-clave")!;
   const btnGuardar = document.querySelector<HTMLButtonElement>("#btn-guardar")!;
   const btnTexto = document.querySelector<HTMLElement>("#btn-texto")!;
@@ -59,12 +71,57 @@ import Layout from "../layouts/Layout.astro";
   function mostrarAlerta(tipo: "error" | "exito", mensaje: string) {
     alerta.textContent = mensaje;
     alerta.className = `p-3.5 text-xs sm:text-sm rounded border leading-relaxed font-sans ${
-      tipo === "error" 
-        ? "bg-red-50 text-red-800 border-red-200" 
+      tipo === "error"
+        ? "bg-red-50 text-red-800 border-red-200"
         : "bg-emerald-50 text-emerald-800 border-emerald-200"
     }`;
     alerta.classList.remove("hidden");
   }
+
+  function mostrarEstadoExpirado() {
+    subtitulo.textContent = "Enlace no válido o expirado";
+    form.classList.add("hidden");
+    bloqueExpirado.classList.remove("hidden");
+  }
+
+  function mostrarFormularioValido() {
+    subtitulo.textContent = "Ingresa tus nuevas credenciales";
+    bloqueExpirado.classList.add("hidden");
+    form.classList.remove("hidden");
+  }
+
+  async function verificarEnlaceRecuperacion() {
+    const params = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+
+    if (params.get("error") || hashParams.get("error")) {
+      mostrarEstadoExpirado();
+      return;
+    }
+
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      mostrarFormularioValido();
+      return;
+    }
+
+    setTimeout(async () => {
+      const { data: reintento } = await supabase.auth.getSession();
+      if (reintento.session) {
+        mostrarFormularioValido();
+      } else {
+        mostrarEstadoExpirado();
+      }
+    }, 800);
+  }
+
+  supabase.auth.onAuthStateChange((evento, session) => {
+    if ((evento === "PASSWORD_RECOVERY" || evento === "SIGNED_IN") && session) {
+      mostrarFormularioValido();
+    }
+  });
+
+  verificarEnlaceRecuperacion();
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -80,13 +137,13 @@ import Layout from "../layouts/Layout.astro";
       btnSpinner.classList.add("hidden");
       mostrarAlerta("error", res.mensaje);
     } else {
-      // Destruir la sesión temporal para obligar al usuario a iniciar sesión formal
       await supabase.auth.signOut();
-
+      form.classList.add("hidden");
+      subtitulo.textContent = "Proceso completado";
       mostrarAlerta("exito", "Contraseña cambiada exitosamente. Redirigiendo al inicio de sesión...");
-      
+
       setTimeout(() => {
-        window.location.href = "/login";
+        window.location.replace("/login");
       }, 1800);
     }
   });

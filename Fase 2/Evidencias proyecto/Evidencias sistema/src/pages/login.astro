@@ -3,14 +3,13 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Acceso · HarvesTam - Edu">
-  <div class="min-h-[75vh] flex items-center justify-center px-4 sm:px-6 py-12">
+  <div id="contenido-login" class="hidden min-h-[75vh] flex items-center justify-center px-4 sm:px-6 py-12">
     <div class="w-full max-w-md bg-white rounded-sm p-8 sm:p-10 shadow-xl space-y-6 animate-in">
-      
       <div class="text-center space-y-1">
         <h1 class="font-serif text-3xl font-medium text-arbol tracking-tight">
           HarvesTam · Edu
         </h1>
-        <p id="subtitulo-auth" class="text-xs text-arbol/60  uppercase tracking-wider">
+        <p id="subtitulo-auth" class="text-xs text-arbol/60 uppercase tracking-wider">
           Acceso al Sistema
         </p>
       </div>
@@ -32,10 +31,8 @@ import Layout from "../layouts/Layout.astro";
         </button>
       </div>
 
-      <!-- Alerta -->
       <div id="alerta" class="hidden p-3.5 text-xs sm:text-sm rounded border leading-relaxed font-sans transition-all duration-300"></div>
 
-      <!-- Formulario -->
       <form id="auth-form" class="space-y-4">
         <div>
           <label for="correo" class="block text-xs uppercase tracking-wider font-mono text-arbol/80 mb-1.5">
@@ -90,13 +87,19 @@ import Layout from "../layouts/Layout.astro";
           Volver al inicio de sesión
         </button>
       </form>
-
     </div>
   </div>
 </Layout>
 
 <script>
-  import { iniciarSesion, registrarUsuario, recuperarClave } from "../lib/auth";
+  import { iniciarSesion, recuperarClave, registrarUsuario } from "../lib/auth";
+import { redirigirSiAutenticado } from "../lib/guard";
+
+  redirigirSiAutenticado().then((yaLogueado) => {
+    if (!yaLogueado) {
+      document.getElementById("contenido-login")?.classList.remove("hidden");
+    }
+  });
 
   type ModoAuth = "login" | "registro" | "recuperar";
   let modo: ModoAuth = "login";
@@ -160,8 +163,8 @@ import Layout from "../layouts/Layout.astro";
   function mostrarAlerta(tipo: "error" | "exito", mensaje: string) {
     alerta.textContent = mensaje;
     alerta.className = `p-3.5 text-xs sm:text-sm rounded border leading-relaxed font-sans ${
-      tipo === "error" 
-        ? "bg-red-50 text-red-800 border-red-200" 
+      tipo === "error"
+        ? "bg-red-50 text-red-800 border-red-200"
         : "bg-emerald-50 text-emerald-800 border-emerald-200"
     }`;
     alerta.classList.remove("hidden");
@@ -190,9 +193,9 @@ import Layout from "../layouts/Layout.astro";
         if (!res.ok) {
           mostrarAlerta("error", res.mensaje);
         } else {
-          mostrarAlerta("exito", res.mensaje);
-          form.reset();
-        }
+          window.location.href = "/panel";
+        
+      }
       } else if (modo === "recuperar") {
         const res = await recuperarClave(correo);
         if (!res.ok) {

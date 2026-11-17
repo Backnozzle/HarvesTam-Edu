@@ -1,33 +1,26 @@
-# build output
-dist/
-# generated types
-.astro/
+# Dependencias y compilados
+**/node_modules/
+**/dist/
+**/.astro/
+**/__pycache__/
+**/.venv/
+**/venv/
 
-# dependencies
-node_modules/
-
-# logs
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-
-# environment variables
+# Variables de entorno
 .env
-.env.production
-.env.local
+**/.env
+**/.env.*
 
-# macOS-specific files
+# Archivos del sistema / IDE
 .DS_Store
-
-# jetbrains setting folder
 .idea/
 
-#Relacionado al acuerdo de uso
-.csv
-.pkl
-.joblib
-.xls
-.xlsx
-
+*.csv
+*.pkl
+*.joblib

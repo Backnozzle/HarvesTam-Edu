@@ -1,7 +1,7 @@
 ---
-import "../styles/global.css";
-import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import "../styles/global.css";
 
 interface Props {
   title?: string;
@@ -38,28 +38,16 @@ const {
       </style></noscript
     >
   </head>
-  <body>
+  <body class="min-h-screen flex flex-col bg-crema text-arbol antialiased">
     <Header />
-    <main>
+    <main class="flex-1 flex flex-col">
       <slot />
     </main>
     <Footer />
-
-    <!-- Indicador de scroll -->
-    {
-      mostrarGauge && (
-        <div class="gauge" aria-hidden="true">
-          {/* Evaluar uso de texto */}
-          {/* <span>desierto</span> */}
-          <i />
-          {/* <span>árbol</span> */}
-        </div>
-      )
-    }
   </body>
 </html>
 
-<style is:global>
+<style is:global> 
   :root {
     --desierto: #f3eee0;
     --arbol: #3f4a31;

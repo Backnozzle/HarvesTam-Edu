@@ -1,17 +1,571 @@
 ---
 import Layout from "../layouts/Layout.astro";
 ---
-<Layout title="Panel de administración">
-  <div class="pagina" id="contenido" style="display:none;">
-    <h1>Panel de administración</h1>
-    <p>En construcción: aquí van los KPIs del sitio.</p>
+
+<Layout title="Dashboard Administrativo · HarvesTam - Edu">
+  <div id="skeleton-dashboard" class="w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8 animate-pulse">
+    <div class="space-y-2.5 border-b border-arbol/10 pb-6">
+      <div class="h-8 w-64 bg-arbol/10 rounded-sm"></div>
+      <div class="h-3.5 w-80 bg-arbol/5 rounded-sm"></div>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div class="h-28 bg-white border border-arbol/10 rounded-sm p-4"></div>
+      <div class="h-28 bg-white border border-arbol/10 rounded-sm p-4"></div>
+      <div class="h-28 bg-white border border-arbol/10 rounded-sm p-4"></div>
+      <div class="h-28 bg-white border border-arbol/10 rounded-sm p-4"></div>
+      <div class="h-28 bg-white border border-arbol/10 rounded-sm p-4"></div>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 h-80 bg-white border border-arbol/10 rounded-sm p-6"></div>
+      <div class="h-80 bg-white border border-arbol/10 rounded-sm p-6"></div>
+    </div>
   </div>
+
+  <main id="contenido-dashboard" class="hidden min-h-[80vh] py-8 px-4 sm:px-6 max-w-6xl mx-auto space-y-8 animate-in">
+    <header class="border-b border-arbol/15 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h1 class="font-serif italic text-3xl font-medium text-arbol tracking-tight">
+          Dashboard de Indicadores
+        </h1>
+        <p class="text-xs font-sans text-arbol/70 mt-1">
+          Panel administrativo · <span id="admin-correo" class="font-medium text-arbol">...</span>
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="flex items-center gap-2">
+          <label for="filtro-principal" class="text-xs font-sans font-medium text-arbol/75">
+            Período:
+          </label>
+          <select
+            id="filtro-principal"
+            class="px-3 py-2 bg-white border border-arbol/25 rounded-sm text-arbol text-xs font-sans focus:outline-none focus:border-arbol cursor-pointer"
+          >
+            <option value="todo">Todo el historial</option>
+            <option value="30d">Últimos 30 días</option>
+            <option value="7d">Últimos 7 días</option>
+          </select>
+        </div>
+
+        <div id="contenedor-filtro-mes" class="hidden flex items-center gap-2">
+          <label for="filtro-mes" class="text-xs font-sans font-medium text-arbol/75">
+            Mes:
+          </label>
+          <select
+            id="filtro-mes"
+            class="px-3 py-2 bg-white border border-arbol/25 rounded-sm text-arbol text-xs font-sans focus:outline-none focus:border-arbol cursor-pointer"
+          >
+            <option value="todos">Todo el año</option>
+          </select>
+        </div>
+
+        <a
+          href="/panel"
+          class="inline-flex items-center justify-center px-4 py-2 border border-arbol/25 text-arbol font-serif text-sm rounded-sm hover:bg-neutral-100 transition-colors"
+        >
+          Ir a Mi Bitácora
+        </a>
+      </div>
+    </header>
+
+    <div id="alerta-dashboard" role="alert" class="hidden p-4 text-sm rounded-sm bg-red-50 text-red-800 border border-red-200 font-sans"></div>
+
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <article id="card-kpi01" class="bg-white border border-arbol/15 rounded-sm p-4 shadow-sm flex flex-col justify-between transition-colors">
+        <div>
+          <div class="flex items-start justify-between gap-1">
+            <h2 class="text-xs font-sans font-semibold text-arbol">Comunidad registrada</h2>
+            <span id="meta-kpi01" class="shrink-0 text-[10px] font-sans font-medium px-1.5 py-0.5 bg-neutral-100 text-arbol/75 rounded">Meta ≥ 15</span>
+          </div>
+          <span id="desc-kpi01" class="block text-[11px] font-sans text-arbol/55 mt-0.5">Base acumulada</span>
+        </div>
+        <p id="val-kpi01" class="text-3xl font-serif font-semibold text-arbol my-2">0</p>
+        <span id="sub-kpi01" class="text-xs font-sans text-arbol/65">Cuentas de usuario activas</span>
+      </article>
+
+      <article id="card-kpi02" class="bg-white border border-arbol/15 rounded-sm p-4 shadow-sm flex flex-col justify-between transition-colors">
+        <div>
+          <div class="flex items-start justify-between gap-1">
+            <h2 class="text-xs font-sans font-semibold text-arbol">Estimaciones válidas</h2>
+            <span id="meta-kpi02" class="shrink-0 text-[10px] font-sans font-medium px-1.5 py-0.5 bg-neutral-100 text-arbol/75 rounded">Meta ≥ 30/mes</span>
+          </div>
+          <span class="block text-[11px] font-sans text-arbol/55 mt-0.5">Uso efectivo del modelo</span>
+        </div>
+        <p id="val-kpi02" class="text-3xl font-serif font-semibold text-arbol my-2">0</p>
+        <span class="text-xs font-sans text-arbol/65">Consultas completadas</span>
+      </article>
+
+      <article id="card-kpi03" class="bg-white border border-arbol/15 rounded-sm p-4 shadow-sm flex flex-col justify-between transition-colors">
+        <div>
+          <div class="flex items-start justify-between gap-1">
+            <h2 class="text-xs font-sans font-semibold text-arbol">Actividad de usuarios</h2>
+            <span id="meta-kpi03" class="shrink-0 text-[10px] font-sans font-medium px-1.5 py-0.5 bg-neutral-100 text-arbol/75 rounded">Meta ≥ 40%</span>
+          </div>
+          <span class="block text-[11px] font-sans text-arbol/55 mt-0.5">Retención en el período</span>
+        </div>
+        <p id="val-kpi03" class="text-3xl font-serif font-semibold text-arbol my-2">0%</p>
+        <span id="sub-kpi03" class="text-xs font-sans text-arbol/65">0 de 0 en últimos 30 días</span>
+      </article>
+
+      <article id="card-kpi04" class="bg-white border border-arbol/15 rounded-sm p-4 shadow-sm flex flex-col justify-between transition-colors">
+        <div>
+          <div class="flex items-start justify-between gap-1">
+            <h2 class="text-xs font-sans font-semibold text-arbol">Satisfacción de uso</h2>
+            <span id="meta-kpi04" class="shrink-0 text-[10px] font-sans font-medium px-1.5 py-0.5 bg-neutral-100 text-arbol/75 rounded">Meta ≥ 80%</span>
+          </div>
+          <span class="block text-[11px] font-sans text-arbol/55 mt-0.5">Percepción de utilidad</span>
+        </div>
+        <p id="val-kpi04" class="text-3xl font-serif font-semibold text-arbol my-2">—</p>
+        <span id="sub-kpi04" class="text-xs font-sans text-arbol/65">Sin valoraciones aún</span>
+      </article>
+
+      <article id="card-kpi05" class="bg-white border border-arbol/15 rounded-sm p-4 shadow-sm flex flex-col justify-between transition-colors">
+        <div>
+          <div class="flex items-start justify-between gap-1">
+            <h2 class="text-xs font-sans font-semibold text-arbol">Tasa de rechazos</h2>
+            <span id="meta-kpi05" class="shrink-0 text-[10px] font-sans font-medium px-1.5 py-0.5 bg-neutral-100 text-arbol/75 rounded">Meta ≤ 10%</span>
+          </div>
+          <span class="block text-[11px] font-sans text-arbol/55 mt-0.5">Consultas fuera de rango</span>
+        </div>
+        <p id="val-kpi05" class="text-3xl font-serif font-semibold text-arbol my-2">0%</p>
+        <span id="sub-kpi05" class="text-xs font-sans text-arbol/65">0 de 0 consultas totales</span>
+      </article>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 bg-white border border-arbol/15 rounded-sm p-6 shadow-sm space-y-4">
+        <div>
+          <h2 class="font-serif text-lg font-medium text-arbol">Actividad y Rechazos del Modelo</h2>
+          <p class="text-xs font-sans text-arbol/65">Comparativa diaria entre estimaciones válidas y consultas rechazadas</p>
+        </div>
+        <div class="relative h-64 w-full">
+          <canvas id="grafico-actividad"></canvas>
+        </div>
+      </div>
+
+      <div class="bg-white border border-arbol/15 rounded-sm p-6 shadow-sm space-y-4 flex flex-col justify-between">
+        <div>
+          <h2 class="font-serif text-lg font-medium text-arbol">Valoración de Utilidad</h2>
+          <p class="text-xs font-sans text-arbol/65">Distribución de respuestas sobre estimaciones válidas</p>
+        </div>
+        <div class="relative h-56 w-full flex items-center justify-center">
+          <canvas id="grafico-utilidad"></canvas>
+          <p id="sin-datos-utilidad" class="hidden text-xs font-sans text-arbol/60 text-center">
+            No existen estimaciones válidas en este período.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white border border-arbol/15 rounded-sm p-6 shadow-sm space-y-4">
+      <div>
+        <h2 class="font-serif text-lg font-medium text-arbol">Crecimiento de Base de Usuarios</h2>
+        <p class="text-xs font-sans text-arbol/65">Evolución de cuentas de usuario registradas en el período seleccionado</p>
+      </div>
+      <div class="relative h-56 w-full">
+        <canvas id="grafico-usuarios"></canvas>
+      </div>
+    </section>
+  </main>
 </Layout>
 
+<style>
+  @keyframes entradaSuave {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-in {
+    animation: entradaSuave 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+</style>
+
 <script>
-  import { exigirRol } from "../lib/proteger";
-  const contenido = document.querySelector<HTMLElement>("#contenido")!;
-  exigirRol("admin").then((autorizado) => {
-    if (autorizado) contenido.style.display = "block";
-  });
+  import Chart from "chart.js/auto";
+import { protegerRuta } from "../lib/guard";
+import {
+obtenerMetricasDashboard,
+type FiltroPeriodo,
+type OpcionMes,
+type ResumenKPIs,
+} from "../lib/metricas";
+
+  const METAS = {
+    usuariosTotalMin: 15,
+    usuariosNuevosMesMin: 3,
+    estimacionesMesMin: 30,
+    estimacionesSemanaMin: 8,
+    activosPorcentajeMin: 40,
+    utilidadPorcentajeMin: 80,
+    rechazosPorcentajeMax: 10,
+  };
+
+  let chartActividad: Chart | null = null;
+  let chartUtilidad: Chart | null = null;
+  let chartUsuarios: Chart | null = null;
+  let aniosPoblados = false;
+  let catalogoMesesPorAnio: Record<string, OpcionMes[]> = {};
+
+  function poblarOpcionesAnios(anios: string[], mesesPorAnio: Record<string, OpcionMes[]>) {
+    catalogoMesesPorAnio = mesesPorAnio;
+    if (aniosPoblados || anios.length === 0) return;
+
+    const selectPrincipal = document.querySelector<HTMLSelectElement>("#filtro-principal")!;
+    const grupo = document.createElement("optgroup");
+    grupo.label = "Por año";
+
+    for (const anio of anios) {
+      const opt = document.createElement("option");
+      opt.value = `anio:${anio}`;
+      opt.textContent = `Año ${anio}`;
+      grupo.appendChild(opt);
+    }
+
+    selectPrincipal.appendChild(grupo);
+    aniosPoblados = true;
+  }
+
+  function actualizarSelectorMeses(anio: string) {
+    const selectMes = document.querySelector<HTMLSelectElement>("#filtro-mes")!;
+    selectMes.replaceChildren();
+
+    const optTodos = document.createElement("option");
+    optTodos.value = "todos";
+    optTodos.textContent = "Todo el año";
+    selectMes.appendChild(optTodos);
+
+    const meses = catalogoMesesPorAnio[anio] ?? [];
+    for (const m of meses) {
+      const opt = document.createElement("option");
+      opt.value = m.numero;
+      opt.textContent = m.etiqueta;
+      selectMes.appendChild(opt);
+    }
+  }
+
+  function aplicarEstadoMeta(
+    cardEl: HTMLElement,
+    valorEl: HTMLElement,
+    badgeEl: HTMLElement,
+    cumple: boolean | null,
+    esCritico = false
+  ) {
+    cardEl.classList.remove("border-arbol/15", "border-arbol/50", "border-amber-300", "border-red-300");
+    valorEl.classList.remove("text-arbol", "text-amber-700", "text-red-700");
+    badgeEl.classList.remove(
+      "bg-neutral-100",
+      "text-arbol/75",
+      "bg-arbol/10",
+      "text-arbol",
+      "bg-amber-50",
+      "text-amber-800",
+      "bg-red-50",
+      "text-red-800"
+    );
+
+    if (cumple === null) {
+      cardEl.classList.add("border-arbol/15");
+      valorEl.classList.add("text-arbol");
+      badgeEl.classList.add("bg-neutral-100", "text-arbol/75");
+      return;
+    }
+
+    if (cumple) {
+      cardEl.classList.add("border-arbol/50");
+      valorEl.classList.add("text-arbol");
+      badgeEl.classList.add("bg-arbol/10", "text-arbol");
+    } else if (esCritico) {
+      cardEl.classList.add("border-red-300");
+      valorEl.classList.add("text-red-700");
+      badgeEl.classList.add("bg-red-50", "text-red-800");
+    } else {
+      cardEl.classList.add("border-amber-300");
+      valorEl.classList.add("text-amber-700");
+      badgeEl.classList.add("bg-amber-50", "text-amber-800");
+    }
+  }
+
+  function pintarTarjetas(m: ResumenKPIs, filtro: FiltroPeriodo) {
+    const val01 = document.querySelector<HTMLElement>("#val-kpi01")!;
+    const meta01 = document.querySelector<HTMLElement>("#meta-kpi01")!;
+    const desc01 = document.querySelector<HTMLElement>("#desc-kpi01")!;
+    const sub01 = document.querySelector<HTMLElement>("#sub-kpi01")!;
+
+    val01.textContent = String(m.kpi01UsuariosEnPeriodo);
+    if (filtro === "todo") {
+      meta01.textContent = `Meta ≥ ${METAS.usuariosTotalMin}`;
+      desc01.textContent = "Base acumulada";
+      sub01.textContent = "Cuentas de usuario activas";
+      aplicarEstadoMeta(
+        document.querySelector<HTMLElement>("#card-kpi01")!,
+        val01,
+        meta01,
+        m.kpi01UsuariosEnPeriodo >= METAS.usuariosTotalMin
+      );
+    } else {
+      const metaPeriodo = filtro.startsWith("anio:")
+        ? METAS.usuariosTotalMin
+        : METAS.usuariosNuevosMesMin;
+      meta01.textContent = `Meta ≥ ${metaPeriodo}`;
+      desc01.textContent = "Nuevos en el período";
+      sub01.textContent = `Total histórico: ${m.kpi01TotalHistorico} usuarios`;
+      aplicarEstadoMeta(
+        document.querySelector<HTMLElement>("#card-kpi01")!,
+        val01,
+        meta01,
+        m.kpi01UsuariosEnPeriodo >= metaPeriodo
+      );
+    }
+
+    const val02 = document.querySelector<HTMLElement>("#val-kpi02")!;
+    const meta02 = document.querySelector<HTMLElement>("#meta-kpi02")!;
+    const metaEstimaciones =
+      filtro === "7d"
+        ? METAS.estimacionesSemanaMin
+        : filtro.startsWith("anio:")
+        ? METAS.estimacionesMesMin * 2
+        : METAS.estimacionesMesMin;
+    meta02.textContent =
+      filtro === "7d"
+        ? `Meta ≥ ${metaEstimaciones}/sem`
+        : filtro.startsWith("anio:")
+        ? `Meta ≥ ${metaEstimaciones}/año`
+        : `Meta ≥ ${metaEstimaciones}/mes`;
+    val02.textContent = String(m.kpi02UsoModelo);
+    aplicarEstadoMeta(
+      document.querySelector<HTMLElement>("#card-kpi02")!,
+      val02,
+      meta02,
+      m.kpi02UsoModelo >= metaEstimaciones
+    );
+
+    const val03 = document.querySelector<HTMLElement>("#val-kpi03")!;
+    const meta03 = document.querySelector<HTMLElement>("#meta-kpi03")!;
+    val03.textContent = `${m.kpi03TasaActivos}%`;
+    document.querySelector<HTMLElement>("#sub-kpi03")!.textContent = `${m.kpi03UsuariosActivos} de ${m.kpi01TotalHistorico} ${m.kpi03EtiquetaPeriodo}`;
+    aplicarEstadoMeta(
+      document.querySelector<HTMLElement>("#card-kpi03")!,
+      val03,
+      meta03,
+      m.kpi03TasaActivos >= METAS.activosPorcentajeMin
+    );
+
+    const val04 = document.querySelector<HTMLElement>("#val-kpi04")!;
+    const sub04 = document.querySelector<HTMLElement>("#sub-kpi04")!;
+    const meta04 = document.querySelector<HTMLElement>("#meta-kpi04")!;
+    const card04 = document.querySelector<HTMLElement>("#card-kpi04")!;
+    if (m.kpi04UtilidadPorcentaje !== null) {
+      val04.textContent = `${m.kpi04UtilidadPorcentaje}%`;
+      sub04.textContent = `${m.kpi04Positivas} útiles de ${m.kpi04TotalValoradas} valoradas`;
+      aplicarEstadoMeta(card04, val04, meta04, m.kpi04UtilidadPorcentaje >= METAS.utilidadPorcentajeMin);
+    } else {
+      val04.textContent = "—";
+      sub04.textContent = "0 valoraciones (n = 0)";
+      aplicarEstadoMeta(card04, val04, meta04, null);
+    }
+
+    const val05 = document.querySelector<HTMLElement>("#val-kpi05")!;
+    const card05 = document.querySelector<HTMLElement>("#card-kpi05")!;
+    const meta05 = document.querySelector<HTMLElement>("#meta-kpi05")!;
+    val05.textContent = `${m.kpi05TasaRechazo}%`;
+    document.querySelector<HTMLElement>("#sub-kpi05")!.textContent = `${m.kpi05RechazadasOError} de ${m.kpi05TotalConsultas} consultas totales`;
+
+    const cumpleRechazos = m.kpi05TasaRechazo <= METAS.rechazosPorcentajeMax;
+    aplicarEstadoMeta(card05, val05, meta05, cumpleRechazos, true);
+  }
+
+  function renderizarGraficos(m: ResumenKPIs) {
+    const colorArbol = "#3f4a31";
+    const colorRojo = "#b91c1c";
+    const colorNaranja = "#d97706";
+
+    chartActividad?.destroy();
+    const ctxActividad = document.querySelector<HTMLCanvasElement>("#grafico-actividad")!;
+    chartActividad = new Chart(ctxActividad, {
+      type: "bar",
+      data: {
+        labels: m.actividadFechas.length > 0 ? m.actividadFechas : ["Sin datos"],
+        datasets: [
+          {
+            label: "Aceptadas",
+            data: m.actividadAceptadas.length > 0 ? m.actividadAceptadas : [0],
+            backgroundColor: colorArbol,
+            borderRadius: 2,
+          },
+          {
+            label: "Rechazadas / Error",
+            data: m.actividadRechazadas.length > 0 ? m.actividadRechazadas : [0],
+            backgroundColor: colorRojo,
+            borderRadius: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { stacked: true, grid: { display: false } },
+          y: {
+            stacked: true,
+            beginAtZero: true,
+            ticks: { precision: 0 },
+            title: {
+              display: true,
+              text: "Cantidad de consultas",
+              color: "#3f4a31",
+              font: { size: 11, weight: "normal" },
+            },
+          },
+        },
+        plugins: {
+          legend: { position: "bottom", labels: { boxWidth: 12, font: { size: 11 } } },
+        },
+      },
+    });
+
+    chartUtilidad?.destroy();
+    const ctxUtilidad = document.querySelector<HTMLCanvasElement>("#grafico-utilidad")!;
+    const msgSinDatos = document.querySelector<HTMLElement>("#sin-datos-utilidad")!;
+    const totalConSinValorar = m.kpi04TotalValoradas + m.kpi04SinValorar;
+
+    if (totalConSinValorar === 0) {
+      ctxUtilidad.classList.add("hidden");
+      msgSinDatos.classList.remove("hidden");
+    } else {
+      ctxUtilidad.classList.remove("hidden");
+      msgSinDatos.classList.add("hidden");
+      chartUtilidad = new Chart(ctxUtilidad, {
+        type: "doughnut",
+        data: {
+          labels: ["Útil (Sí)", "No útil (No)", "Sin valorar"],
+          datasets: [
+            {
+              data: [m.kpi04Positivas, m.kpi04Negativas, m.kpi04SinValorar],
+              backgroundColor: [colorArbol, colorRojo, colorNaranja],
+              borderWidth: 0,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "68%",
+          plugins: {
+            legend: { position: "bottom", labels: { boxWidth: 12, font: { size: 11 } } },
+          },
+        },
+      });
+    }
+
+    chartUsuarios?.destroy();
+    const ctxUsuarios = document.querySelector<HTMLCanvasElement>("#grafico-usuarios")!;
+    chartUsuarios = new Chart(ctxUsuarios, {
+      type: "line",
+      data: {
+        labels: m.usuariosFechas.length > 0 ? m.usuariosFechas : ["Sin datos"],
+        datasets: [
+          {
+            label: "Usuarios acumulados",
+            data: m.usuariosAcumulados.length > 0 ? m.usuariosAcumulados : [0],
+            borderColor: colorArbol,
+            backgroundColor: "rgba(63, 74, 49, 0.12)",
+            fill: true,
+            tension: 0.25,
+            pointRadius: 3,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            beginAtZero: true,
+            ticks: { precision: 0 },
+            title: {
+              display: true,
+              text: "Total de usuarios",
+              color: "#3f4a31",
+              font: { size: 11, weight: "normal" },
+            },
+          },
+        },
+        plugins: {
+          legend: { display: false },
+        },
+      },
+    });
+  }
+
+  function resolverFiltroActual(): FiltroPeriodo {
+    const valPrincipal = document.querySelector<HTMLSelectElement>("#filtro-principal")!.value;
+    if (valPrincipal.startsWith("anio:")) {
+      const anio = valPrincipal.slice(5);
+      const valMes = document.querySelector<HTMLSelectElement>("#filtro-mes")!.value;
+      if (valMes !== "todos") {
+        return `mes:${anio}-${valMes}`;
+      }
+      return `anio:${anio}`;
+    }
+    return valPrincipal as FiltroPeriodo;
+  }
+
+  async function cargarDatos(filtro: FiltroPeriodo) {
+    const alerta = document.querySelector<HTMLElement>("#alerta-dashboard")!;
+    alerta.classList.add("hidden");
+
+    try {
+      const metricas = await obtenerMetricasDashboard(filtro);
+      poblarOpcionesAnios(metricas.aniosDisponibles, metricas.mesesPorAnio);
+      pintarTarjetas(metricas, filtro);
+      renderizarGraficos(metricas);
+    } catch (err) {
+      alerta.textContent = err instanceof Error ? err.message : "Error al cargar los indicadores.";
+      alerta.classList.remove("hidden");
+    }
+  }
+
+  async function inicializarDashboard() {
+    const estado = await protegerRuta("admin");
+
+    if (estado.permitido) {
+      const correoSpan = document.querySelector<HTMLElement>("#admin-correo");
+      if (correoSpan && estado.correo) {
+        correoSpan.textContent = estado.correo;
+      }
+
+      const selectPrincipal = document.querySelector<HTMLSelectElement>("#filtro-principal")!;
+      const contenedorMes = document.querySelector<HTMLElement>("#contenedor-filtro-mes")!;
+      const selectMes = document.querySelector<HTMLSelectElement>("#filtro-mes")!;
+
+      selectPrincipal.addEventListener("change", () => {
+        const val = selectPrincipal.value;
+        if (val.startsWith("anio:")) {
+          actualizarSelectorMeses(val.slice(5));
+          contenedorMes.classList.remove("hidden");
+        } else {
+          contenedorMes.classList.add("hidden");
+        }
+        cargarDatos(resolverFiltroActual());
+      });
+
+      selectMes.addEventListener("change", () => {
+        cargarDatos(resolverFiltroActual());
+      });
+
+      await cargarDatos("todo");
+
+      document.querySelector<HTMLElement>("#skeleton-dashboard")?.classList.add("hidden");
+      document.querySelector<HTMLElement>("#contenido-dashboard")?.classList.remove("hidden");
+    }
+  }
+
+  inicializarDashboard();
 </script>

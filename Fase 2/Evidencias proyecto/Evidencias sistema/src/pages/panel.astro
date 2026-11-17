@@ -1,37 +1,89 @@
 ---
-import Layout from "../layouts/Layout.astro";
 import SkeletonPanel from "../components/SkeletonPanel.astro";
+import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="Panel de Monitoreo · HarvesTam - Edu">
-  <!-- 1. Estado de carga inicial (visible por defecto) -->
-  <div id="contenedor-skeleton">
+<Layout title="Mi Panel · HarvesTam - Edu">
+  <div id="contenedor-skeleton" class="w-full">
     <SkeletonPanel />
   </div>
 
-  <!-- 2. Contenido real del panel (oculto hasta confirmar permisos) -->
-  <main id="contenido-panel" class="hidden min-h-[80vh] py-8 px-4 sm:px-6 max-w-6xl mx-auto space-y-8 animate-in">
-   
+  <main id="contenido-panel" class="hidden w-full min-h-[80vh] py-8 px-4 sm:px-6 max-w-6xl mx-auto space-y-8 animate-in">
     <header class="border-b border-arbol/15 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
+      <div class="min-w-0">
         <h1 class="font-serif italic text-3xl font-medium text-arbol tracking-tight">
-          Panel de Monitoreo
+          Mi Bitácora de Estimaciones
         </h1>
-        <p class="text-xs font-mono uppercase tracking-wider text-arbol/70 mt-1">
-          ACCESO AUTENTICADO · <span id="correo-usuario" class="font-semibold text-arbol font-mono">...</span>
+        <p class="text-xs font-mono uppercase tracking-wider text-arbol/70 mt-1 break-all">
+          SESIÓN ACTIVA · <span id="correo-usuario" class="font-semibold text-arbol">...</span>
         </p>
       </div>
+      <a
+        href="/estimar"
+        class="w-full sm:w-auto inline-flex items-center justify-center px-5 py-2.5 bg-arbol text-white font-serif text-sm rounded-sm hover:bg-neutral-800 transition-colors shadow-sm shrink-0"
+      >
+        Nueva Estimación
+      </a>
     </header>
 
-    <!-- Tarjeta con fuente sans clara para lectura -->
-    <section class="bg-white border border-arbol/15 rounded-sm p-8 shadow-sm font-sans">
-      <div class="max-w-xl space-y-3">
-        <h2 class="font-serif text-xl font-medium text-arbol tracking-tight">
-          Área de trabajo preparada
+    <section class="w-full bg-white border border-arbol/15 rounded-sm shadow-sm overflow-hidden">
+      <div class="px-4 sm:px-6 py-4 border-b border-arbol/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 bg-neutral-50/60">
+        <h2 class="font-serif text-lg font-medium text-arbol">
+          Historial de consultas realizadas
         </h2>
-        <p class="text-sm text-arbol/80 leading-relaxed font-sans font-normal">
-          Este espacio queda listo para recibir las entradas de datos, consultas y métricas una vez consolidado el modelo.
+        <span id="contador-consultas" class="text-xs font-mono text-arbol/70">
+          0 registros
+        </span>
+      </div>
+
+      <div id="estado-vacio" class="hidden p-8 sm:p-10 text-center space-y-3">
+        <p class="font-serif text-base text-arbol/80">
+          Aún no has realizado estimaciones de carga frutal.
         </p>
+        <p class="text-xs font-sans text-arbol/60">
+          Las consultas válidas que realices aparecerán registradas aquí para tu seguimiento.
+        </p>
+      </div>
+
+      <div id="contenedor-tabla" class="hidden w-full overflow-x-auto">
+        <table class="w-full min-w-[640px] text-left border-collapse">
+          <thead>
+            <tr class="border-b border-arbol/10 text-[11px] font-mono uppercase tracking-wider text-arbol/60 bg-neutral-50/40 whitespace-nowrap">
+              <th class="py-3 px-4 sm:px-6">Fecha</th>
+              <th class="py-3 px-4">Mes</th>
+              <th class="py-3 px-4">Diámetro</th>
+              <th class="py-3 px-4">Mediana (Ref.)</th>
+              <th class="py-3 px-4">Rango (Q10 – Q90)</th>
+              <th class="py-3 px-4 sm:px-6 text-right">¿Fue útil?</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpo-historial" class="divide-y divide-arbol/10 text-sm font-sans text-arbol/90"></tbody>
+        </table>
+      </div>
+
+      <div id="barra-paginacion" class="hidden px-4 sm:px-6 py-3.5 border-t border-arbol/10 bg-neutral-50/40 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <span id="info-pagina" class="text-xs font-sans text-arbol/70">
+          Mostrando 1–12 de 0
+        </span>
+        <div class="inline-flex items-center gap-2">
+          <button
+            type="button"
+            id="btn-pagina-anterior"
+            class="px-3 py-1.5 text-xs font-sans border border-arbol/20 rounded-sm text-arbol hover:bg-neutral-100 transition-colors disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+          >
+            Anterior
+          </button>
+          <span id="indicador-pagina" class="text-xs font-mono text-arbol/80 px-2">
+            1 / 1
+          </span>
+          <button
+            type="button"
+            id="btn-pagina-siguiente"
+            class="px-3 py-1.5 text-xs font-sans border border-arbol/20 rounded-sm text-arbol hover:bg-neutral-100 transition-colors disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+          >
+            Siguiente
+          </button>
+        </div>
       </div>
     </section>
   </main>
@@ -55,24 +107,183 @@ import SkeletonPanel from "../components/SkeletonPanel.astro";
 </style>
 
 <script>
-  import { protegerRuta } from "../lib/guard";
+  import { obtenerHistorialUsuario, valorarEstimacion, type FilaEstimacion } from "../lib/estimaciones";
+import { protegerRuta } from "../lib/guard";
+
+  const ELEMENTOS_POR_PAGINA = 12;
+  let registrosTotales: FilaEstimacion[] = [];
+  let paginaActual = 1;
+
+  function formatearFecha(iso: string): string {
+    return new Date(iso).toLocaleDateString("es-CL", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  function nombreMes(mes: number): string {
+    return mes === 2 ? "Febrero" : mes === 12 ? "Diciembre" : String(mes);
+  }
+
+  function crearCelda(texto: string, clases: string): HTMLTableCellElement {
+    const td = document.createElement("td");
+    td.textContent = texto;
+    td.className = clases;
+    return td;
+  }
+
+  function crearControlUtilidad(item: FilaEstimacion): HTMLTableCellElement {
+    const td = document.createElement("td");
+    td.className = "py-3.5 px-4 sm:px-6 text-right whitespace-nowrap";
+
+    if (item.util !== null) {
+      const etiqueta = document.createElement("span");
+      etiqueta.textContent = item.util ? "Sí" : "No";
+      etiqueta.className = item.util
+        ? "text-xs font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200"
+        : "text-xs font-mono px-2 py-0.5 rounded bg-red-50 text-red-800 border border-red-200";
+      td.appendChild(etiqueta);
+      return td;
+    }
+
+    const grupo = document.createElement("div");
+    grupo.className = "inline-flex items-center gap-1.5";
+
+    const btnSi = document.createElement("button");
+    btnSi.type = "button";
+    btnSi.textContent = "Sí";
+    btnSi.className = "px-2.5 py-1 text-xs font-mono border border-arbol/20 rounded hover:bg-arbol hover:text-white transition-colors cursor-pointer";
+
+    const btnNo = document.createElement("button");
+    btnNo.type = "button";
+    btnNo.textContent = "No";
+    btnNo.className = "px-2.5 py-1 text-xs font-mono border border-arbol/20 rounded hover:bg-neutral-200 transition-colors cursor-pointer";
+
+    const manejarVoto = async (valor: boolean) => {
+      btnSi.disabled = true;
+      btnNo.disabled = true;
+      const ok = await valorarEstimacion(item.id, valor);
+      if (ok) {
+        item.util = valor;
+        td.replaceChildren();
+        const badge = document.createElement("span");
+        badge.textContent = valor ? "Sí" : "No";
+        badge.className = valor
+          ? "text-xs font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200"
+          : "text-xs font-mono px-2 py-0.5 rounded bg-red-50 text-red-800 border border-red-200";
+        td.appendChild(badge);
+      } else {
+        btnSi.disabled = false;
+        btnNo.disabled = false;
+      }
+    };
+
+    btnSi.addEventListener("click", () => manejarVoto(true));
+    btnNo.addEventListener("click", () => manejarVoto(false));
+
+    grupo.append(btnSi, btnNo);
+    td.appendChild(grupo);
+    return td;
+  }
+
+  function renderizarPagina() {
+    const contador = document.querySelector<HTMLElement>("#contador-consultas")!;
+    const vacio = document.querySelector<HTMLElement>("#estado-vacio")!;
+    const tabla = document.querySelector<HTMLElement>("#contenedor-tabla")!;
+    const tbody = document.querySelector<HTMLElement>("#cuerpo-historial")!;
+    const barraPaginacion = document.querySelector<HTMLElement>("#barra-paginacion")!;
+    const infoPagina = document.querySelector<HTMLElement>("#info-pagina")!;
+    const indicadorPagina = document.querySelector<HTMLElement>("#indicador-pagina")!;
+    const btnAnterior = document.querySelector<HTMLButtonElement>("#btn-pagina-anterior")!;
+    const btnSiguiente = document.querySelector<HTMLButtonElement>("#btn-pagina-siguiente")!;
+
+    const total = registrosTotales.length;
+    contador.textContent = `${total} ${total === 1 ? "registro" : "registros"}`;
+
+    if (total === 0) {
+      vacio.classList.remove("hidden");
+      tabla.classList.add("hidden");
+      barraPaginacion.classList.add("hidden");
+      return;
+    }
+
+    const totalPaginas = Math.max(1, Math.ceil(total / ELEMENTOS_POR_PAGINA));
+    if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+    if (paginaActual < 1) paginaActual = 1;
+
+    const inicio = (paginaActual - 1) * ELEMENTOS_POR_PAGINA;
+    const fin = Math.min(inicio + ELEMENTOS_POR_PAGINA, total);
+    const visibles = registrosTotales.slice(inicio, fin);
+
+    tbody.replaceChildren();
+    for (const item of visibles) {
+      const tr = document.createElement("tr");
+      tr.className = "hover:bg-neutral-50/80 transition-colors";
+
+      const medianaTxt = item.mediana !== null ? `${item.mediana.toLocaleString("es-CL")} g/m²` : "-";
+      const rangoTxt =
+        item.q10 !== null && item.q90 !== null
+          ? `${item.q10.toLocaleString("es-CL")} – ${item.q90.toLocaleString("es-CL")} g/m²`
+          : "-";
+
+      tr.append(
+        crearCelda(formatearFecha(item.creado_en), "py-3.5 px-4 sm:px-6 text-xs font-mono text-arbol/70 whitespace-nowrap"),
+        crearCelda(nombreMes(item.mes), "py-3.5 px-4 font-serif whitespace-nowrap"),
+        crearCelda(`${Number(item.diametro).toFixed(2)} m`, "py-3.5 px-4 font-mono text-xs whitespace-nowrap"),
+        crearCelda(medianaTxt, "py-3.5 px-4 font-semibold text-arbol whitespace-nowrap"),
+        crearCelda(rangoTxt, "py-3.5 px-4 text-xs text-arbol/75 whitespace-nowrap"),
+        crearControlUtilidad(item)
+      );
+
+      tbody.appendChild(tr);
+    }
+
+    vacio.classList.add("hidden");
+    tabla.classList.remove("hidden");
+
+    if (total > ELEMENTOS_POR_PAGINA) {
+      barraPaginacion.classList.remove("hidden");
+      infoPagina.textContent = `Mostrando ${inicio + 1}–${fin} de ${total}`;
+      indicadorPagina.textContent = `${paginaActual} / ${totalPaginas}`;
+      btnAnterior.disabled = paginaActual === 1;
+      btnSiguiente.disabled = paginaActual === totalPaginas;
+    } else {
+      barraPaginacion.classList.add("hidden");
+    }
+  }
 
   async function inicializarVista() {
     const estado = await protegerRuta();
 
-    if (estado.permitido) {
-      // Inyectar datos del usuario autenticado
+    if (estado.permitido && estado.usuarioId) {
       const correoSpan = document.querySelector<HTMLElement>("#correo-usuario");
       if (correoSpan && estado.correo) {
         correoSpan.textContent = estado.correo;
       }
 
-      // Reemplazo limpio: ocultar skeleton y mostrar contenido real
-      const skeleton = document.querySelector<HTMLElement>("#contenedor-skeleton");
-      const contenido = document.querySelector<HTMLElement>("#contenido-panel");
+      document.querySelector<HTMLButtonElement>("#btn-pagina-anterior")?.addEventListener("click", () => {
+        if (paginaActual > 1) {
+          paginaActual--;
+          renderizarPagina();
+        }
+      });
 
-      if (skeleton) skeleton.classList.add("hidden");
-      if (contenido) contenido.classList.remove("hidden");
+      document.querySelector<HTMLButtonElement>("#btn-pagina-siguiente")?.addEventListener("click", () => {
+        const totalPaginas = Math.ceil(registrosTotales.length / ELEMENTOS_POR_PAGINA);
+        if (paginaActual < totalPaginas) {
+          paginaActual++;
+          renderizarPagina();
+        }
+      });
+
+      registrosTotales = await obtenerHistorialUsuario(estado.usuarioId);
+      renderizarPagina();
+
+      document.querySelector<HTMLElement>("#contenedor-skeleton")?.classList.add("hidden");
+      document.querySelector<HTMLElement>("#contenido-panel")?.classList.remove("hidden");
     }
   }
 
