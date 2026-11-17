@@ -1,0 +1,20 @@
+services:
+    api:
+        build: ./backend
+        container_name: harvestam-api
+        env_file:
+            - ./.env
+        restart: unless-stopped
+
+    web:
+        build:
+            context: .
+            args:
+                PUBLIC_SUPABASE_URL: ${PUBLIC_SUPABASE_URL}
+                PUBLIC_SUPABASE_KEY: ${PUBLIC_SUPABASE_KEY}
+        container_name: harvestam-web
+        ports:
+            - "8080:80"
+        depends_on:
+            - api
+        restart: unless-stopped
